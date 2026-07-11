@@ -15,7 +15,10 @@ Environment variables (same as the original prototype):
 
 import os
 
+from dotenv import load_dotenv
 from flask import Flask, jsonify
+
+load_dotenv()
 
 APP_NAME = "Portfolios for Weirdos API"
 

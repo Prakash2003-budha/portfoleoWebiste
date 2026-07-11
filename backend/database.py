@@ -10,6 +10,10 @@ prototype's Database class, just pulled into its own module.
 import os
 import sqlite3
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 class Database:
     def __init__(self):
