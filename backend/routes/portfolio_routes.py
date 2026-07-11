@@ -5,24 +5,17 @@ from models import PortfolioModel
 
 bp = Blueprint("portfolio", __name__, url_prefix="/api/portfolio")
 
-# Section name -> (table, editable columns). Keeping "conventional" evidence
-# (education/experiences/skills/achievements) and "identity" evidence
-# (identity_traits/habits) in the same shape, per the project's whole point.
-SECTIONS = {
-    "education": ("education", ["institution", "qualification", "start_year", "end_year"]),
-    "experiences": ("experiences", ["title", "organization", "description", "start_date", "end_date"]),
-    "skills": ("skills", ["name", "category", "confidence_level"]),
-    "achievements": ("achievements", ["title", "description", "achieved_on"]),
-    "identity_traits": ("identity_traits", ["trait_name", "trait_type", "description", "visibility"]),
-    "habits": ("habits", ["name", "frequency", "identity_link"]),
-}
-
 
 def _all_sections_for(user_id):
     result = {}
-    for section, (table, _columns) in SECTIONS.items():
-        result[section] = PortfolioModel.list_section(table, user_id)
+    for section, cfg in PortfolioModel.SECTIONS.items():
+        result[section] = PortfolioModel.list_section(section, user_id)
     return result
+
+
+@bp.get("/schema")
+def get_portfolio_schema():
+    return jsonify(PortfolioModel.get_schema())
 
 
 @bp.get("/user/<int:user_id>")
@@ -42,9 +35,9 @@ def portfolio_mine(user):
 @bp.post("/<section>")
 @login_required
 def add_item(user, section):
-    if section not in SECTIONS:
+    if section not in PortfolioModel.SECTIONS:
         return jsonify({"error": "Unknown portfolio section."}), 404
-    table, columns = SECTIONS[section]
+    table, columns = PortfolioModel.SECTIONS[section]
     data = request.get_json(silent=True) or {}
     values = [data.get(col) for col in columns]
 
@@ -58,9 +51,9 @@ def add_item(user, section):
 @bp.delete("/<section>/<int:item_id>")
 @login_required
 def delete_item(user, section, item_id):
-    if section not in SECTIONS:
+    if section not in PortfolioModel.SECTIONS:
         return jsonify({"error": "Unknown portfolio section."}), 404
-    table, _columns = SECTIONS[section]
+    table = section
     row = PortfolioModel.get_owner_id(table, item_id)
     if not row or row["user_id"] != user["id"]:
         return jsonify({"error": "Not found."}), 404

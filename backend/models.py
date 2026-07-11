@@ -1,5 +1,71 @@
 from database import db
 
+PORTFOLIO_SECTIONS = {
+    "education": {
+        "label": "Education",
+        "primary": "institution",
+        "secondary": "qualification",
+        "fields": [
+            {"name": "institution", "label": "Institution", "required": True},
+            {"name": "qualification", "label": "Qualification", "required": True},
+            {"name": "start_year", "label": "Start year", "type": "number"},
+            {"name": "end_year", "label": "End year", "type": "number"},
+        ],
+    },
+    "experiences": {
+        "label": "Experience",
+        "primary": "title",
+        "secondary": "organization",
+        "fields": [
+            {"name": "title", "label": "Title", "required": True},
+            {"name": "organization", "label": "Organization", "required": True},
+            {"name": "description", "label": "Description"},
+            {"name": "start_date", "label": "Start date", "type": "date"},
+            {"name": "end_date", "label": "End date", "type": "date"},
+        ],
+    },
+    "skills": {
+        "label": "Skills",
+        "primary": "name",
+        "secondary": "category",
+        "fields": [
+            {"name": "name", "label": "Skill", "required": True},
+            {"name": "category", "label": "Category"},
+            {"name": "confidence_level", "label": "Confidence (1-5)", "type": "number"},
+        ],
+    },
+    "achievements": {
+        "label": "Achievements",
+        "primary": "title",
+        "secondary": "description",
+        "fields": [
+            {"name": "title", "label": "Title", "required": True},
+            {"name": "description", "label": "Description"},
+            {"name": "achieved_on", "label": "Date", "type": "date"},
+        ],
+    },
+    "identity_traits": {
+        "label": "Identity traits",
+        "primary": "trait_name",
+        "secondary": "description",
+        "fields": [
+            {"name": "trait_name", "label": "Trait", "required": True},
+            {"name": "trait_type", "label": "Type (strength/weakness/personality)"},
+            {"name": "description", "label": "Description"},
+        ],
+    },
+    "habits": {
+        "label": "Habits",
+        "primary": "name",
+        "secondary": "identity_link",
+        "fields": [
+            {"name": "name", "label": "Habit", "required": True},
+            {"name": "frequency", "label": "Frequency"},
+            {"name": "identity_link", "label": "How it connects to identity"},
+        ],
+    },
+}
+
 
 class UserModel:
     @classmethod
@@ -98,6 +164,12 @@ class ReflectionModel:
 
 
 class PortfolioModel:
+    SECTIONS = PORTFOLIO_SECTIONS
+
+    @classmethod
+    def get_schema(cls):
+        return cls.SECTIONS
+
     @classmethod
     def list_section(cls, table, user_id):
         return db.fetchall(f"SELECT * FROM {table} WHERE user_id = ? ORDER BY id DESC", (user_id,))

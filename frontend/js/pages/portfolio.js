@@ -1,72 +1,16 @@
-// Mirrors backend/routes/portfolio_routes.py SECTIONS, plus display labels
-// and the input fields needed to add a new record in each section.
-const PORTFOLIO_SECTIONS = {
-  education: {
-    label: "Education",
-    primary: "institution",
-    secondary: "qualification",
-    fields: [
-      { name: "institution", label: "Institution", required: true },
-      { name: "qualification", label: "Qualification", required: true },
-      { name: "start_year", label: "Start year", type: "number" },
-      { name: "end_year", label: "End year", type: "number" },
-    ],
-  },
-  experiences: {
-    label: "Experience",
-    primary: "title",
-    secondary: "organization",
-    fields: [
-      { name: "title", label: "Title", required: true },
-      { name: "organization", label: "Organization", required: true },
-      { name: "description", label: "Description" },
-      { name: "start_date", label: "Start date", type: "date" },
-      { name: "end_date", label: "End date", type: "date" },
-    ],
-  },
-  skills: {
-    label: "Skills",
-    primary: "name",
-    secondary: "category",
-    fields: [
-      { name: "name", label: "Skill", required: true },
-      { name: "category", label: "Category" },
-      { name: "confidence_level", label: "Confidence (1-5)", type: "number" },
-    ],
-  },
-  achievements: {
-    label: "Achievements",
-    primary: "title",
-    secondary: "description",
-    fields: [
-      { name: "title", label: "Title", required: true },
-      { name: "description", label: "Description" },
-      { name: "achieved_on", label: "Date", type: "date" },
-    ],
-  },
-  identity_traits: {
-    label: "Identity traits",
-    primary: "trait_name",
-    secondary: "description",
-    fields: [
-      { name: "trait_name", label: "Trait", required: true },
-      { name: "trait_type", label: "Type (strength/weakness/personality)" },
-      { name: "description", label: "Description" },
-    ],
-  },
-  habits: {
-    label: "Habits",
-    primary: "name",
-    secondary: "identity_link",
-    fields: [
-      { name: "name", label: "Habit", required: true },
-      { name: "frequency", label: "Frequency" },
-      { name: "identity_link", label: "How it connects to identity" },
-    ],
-  },
-};
-
+let PORTFOLIO_SCHEMA = null;
 let activeSection = "education";
+
+async function loadPortfolioSchema() {
+  if (!PORTFOLIO_SCHEMA) {
+    PORTFOLIO_SCHEMA = await api.get("/portfolio/schema");
+  }
+  return PORTFOLIO_SCHEMA;
+}
+
+function getSectionConfig(section) {
+  return PORTFOLIO_SCHEMA ? PORTFOLIO_SCHEMA[section] : null;
+}
 
 async function renderPortfolio(params) {
   const viewingUserId = params && params.userId;
@@ -80,6 +24,8 @@ async function renderPortfolio(params) {
   let owner;
   let sections;
   let editable;
+
+  await window.loadPortfolioSchema();
 
   if (viewingUserId) {
     const data = await api.get(`/portfolio/user/${viewingUserId}`);
@@ -98,7 +44,7 @@ async function renderPortfolio(params) {
     editable = true;
   }
 
-  const tabs = Object.entries(PORTFOLIO_SECTIONS)
+  const tabs = Object.entries(window.getPortfolioSchema())
     .map(
       ([key, cfg]) =>
         `<button data-section="${key}" class="${key === activeSection ? "active" : ""}">${esc(cfg.label)}</button>`
@@ -128,7 +74,7 @@ async function renderPortfolio(params) {
 }
 
 function renderSectionBody(sections, editable) {
-  const cfg = PORTFOLIO_SECTIONS[activeSection];
+  const cfg = window.getSectionConfig(activeSection);
   const rows = sections[activeSection] || [];
   const items =
     rows
