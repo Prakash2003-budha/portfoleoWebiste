@@ -89,7 +89,7 @@ def me():
     return jsonify(user)
 
 
-@bp.get("/activate/<token>")
+@bp.route("/activate/<token>", methods=["GET"])
 def activate(token):
     updated = UserModel.activate(token)
     if not updated:

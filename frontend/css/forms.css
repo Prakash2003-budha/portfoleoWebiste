@@ -16,6 +16,65 @@
   padding: 26px;
 }
 
+.status-card {
+  display: grid;
+  gap: 18px;
+  padding: 32px;
+  text-align: center;
+}
+
+.status-card.success {
+  border-color: rgba(110, 231, 183, 0.45);
+  background: linear-gradient(180deg, rgba(54, 192, 119, 0.12), rgba(24, 26, 32, 0.95));
+}
+
+.status-card.error {
+  border-color: rgba(253, 164, 175, 0.45);
+  background: linear-gradient(180deg, rgba(249, 115, 22, 0.12), rgba(24, 26, 32, 0.95));
+}
+
+.status-icon {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.status-card.success .status-icon {
+  color: var(--accent);
+}
+
+.status-card.error .status-icon {
+  color: #fca5a5;
+}
+
+.status-label {
+  margin: 0;
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.status-details p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.status-actions {
+  display: grid;
+  gap: 12px;
+}
+
+.status-actions .button {
+  width: 100%;
+}
+
 .form-card.compact {
   align-self: start;
 }
