@@ -1,0 +1,32 @@
+import sqlite3
+import os
+from pathlib import Path
+
+
+def migrate_sqlite_db():
+    base_dir = Path(__file__).resolve().parent.parent
+    db_path = Path(os.getenv("SQLITE_PATH", str(base_dir / "portfolio_weirdos.db")))
+
+    print(f"Migrating SQLite database at {db_path}")
+    connection = sqlite3.connect(db_path)
+    cursor = connection.cursor()
+
+    cursor.execute("PRAGMA table_info(users);")
+    columns = [row[1] for row in cursor.fetchall()]
+
+    if "activated" not in columns:
+        print("Adding activated column to users table")
+        cursor.execute("ALTER TABLE users ADD COLUMN activated INTEGER NOT NULL DEFAULT 0")
+        cursor.execute("UPDATE users SET activated = 1")
+
+    if "activation_token" not in columns:
+        print("Adding activation_token column to users table")
+        cursor.execute("ALTER TABLE users ADD COLUMN activation_token TEXT")
+
+    connection.commit()
+    connection.close()
+    print("Migration complete.")
+
+
+if __name__ == "__main__":
+    migrate_sqlite_db()

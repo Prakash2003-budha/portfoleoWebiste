@@ -15,6 +15,7 @@ Environment variables (same as the original prototype):
 from flask import Flask, jsonify
 
 from config import Config
+from scripts.migrate_sqlite import migrate_sqlite_db
 
 APP_NAME = Config.APP_NAME
 
@@ -57,5 +58,7 @@ def create_app():
 app = create_app()
 
 if __name__ == "__main__":
+    if Config.DB_ENGINE == "sqlite":
+        migrate_sqlite_db()
     print(f"{APP_NAME} running at http://127.0.0.1:{Config.PORT}")
     app.run(host="127.0.0.1", port=Config.PORT, debug=True)
