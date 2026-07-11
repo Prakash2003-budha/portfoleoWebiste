@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 
 from auth import current_user, login_required
-from database import db
+from models import ProfileModel, ReflectionModel
 
 bp = Blueprint("profiles", __name__, url_prefix="/api")
 
@@ -9,11 +9,7 @@ bp = Blueprint("profiles", __name__, url_prefix="/api")
 @bp.get("/profiles")
 def list_profiles():
     user = current_user()
-    rows = db.fetchall(
-        """SELECT profiles.*, users.full_name
-           FROM profiles JOIN users ON users.id = profiles.user_id
-           ORDER BY profiles.id DESC"""
-    )
+    rows = ProfileModel.list_public()
     for row in rows:
         row["is_owner"] = bool(user) and row["user_id"] == user["id"]
     return jsonify(rows)
@@ -21,12 +17,7 @@ def list_profiles():
 
 @bp.get("/profiles/<int:profile_id>")
 def get_profile(profile_id):
-    row = db.fetchone(
-        """SELECT profiles.*, users.full_name, users.email
-           FROM profiles JOIN users ON users.id = profiles.user_id
-           WHERE profiles.id = ?""",
-        (profile_id,),
-    )
+    row = ProfileModel.get_by_id(profile_id)
     if not row:
         return jsonify({"error": "Profile not found."}), 404
     user = current_user()
@@ -37,7 +28,7 @@ def get_profile(profile_id):
 @bp.get("/profile/me")
 @login_required
 def my_profile(user):
-    row = db.fetchone("SELECT * FROM profiles WHERE user_id = ?", (user["id"],))
+    row = ProfileModel.get_by_user_id(user["id"])
     return jsonify(row or {})
 
 
@@ -53,34 +44,17 @@ def save_profile(user):
     if not display_name or not headline:
         return jsonify({"error": "Display name and headline are required."}), 400
 
-    existing = db.fetchone("SELECT id FROM profiles WHERE user_id = ?", (user["id"],))
-    if existing:
-        db.execute(
-            "UPDATE profiles SET display_name = ?, headline = ?, location = ?, bio = ? WHERE user_id = ?",
-            (display_name, headline, location, bio, user["id"]),
-        )
-        profile_id = existing["id"]
-    else:
-        profile_id = db.execute(
-            "INSERT INTO profiles (user_id, display_name, headline, location, bio) VALUES (?, ?, ?, ?, ?)",
-            (user["id"], display_name, headline, location, bio),
-        )
+    profile_id = ProfileModel.upsert_for_user(user["id"], display_name, headline, location, bio)
     return jsonify({"id": profile_id})
 
 
 @bp.get("/dashboard")
 @login_required
 def dashboard(user):
-    my_profile_row = db.fetchone("SELECT * FROM profiles WHERE user_id = ?", (user["id"],))
-    profile_count = db.fetchone("SELECT COUNT(*) AS total FROM profiles")["total"]
-    reflection_count = db.fetchone(
-        "SELECT COUNT(*) AS total FROM reflections WHERE user_id = ?", (user["id"],)
-    )["total"]
-    recent_profiles = db.fetchall(
-        """SELECT profiles.*, users.full_name
-           FROM profiles JOIN users ON users.id = profiles.user_id
-           ORDER BY profiles.id DESC LIMIT 6"""
-    )
+    my_profile_row = ProfileModel.get_by_user_id(user["id"])
+    profile_count = ProfileModel.count_all()
+    reflection_count = ReflectionModel.count_for_user(user["id"])
+    recent_profiles = ProfileModel.list_recent(6)
     for row in recent_profiles:
         row["is_owner"] = row["user_id"] == user["id"]
 

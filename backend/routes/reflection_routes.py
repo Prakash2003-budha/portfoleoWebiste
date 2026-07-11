@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 
 from auth import login_required
-from database import db
+from models import FeedbackModel, ReflectionModel
 
 bp = Blueprint("reflections", __name__, url_prefix="/api")
 
@@ -9,9 +9,7 @@ bp = Blueprint("reflections", __name__, url_prefix="/api")
 @bp.get("/reflections")
 @login_required
 def list_reflections(user):
-    rows = db.fetchall(
-        "SELECT * FROM reflections WHERE user_id = ? ORDER BY created_at DESC", (user["id"],)
-    )
+    rows = ReflectionModel.list_for_user(user["id"])
     return jsonify(rows)
 
 
@@ -24,10 +22,7 @@ def add_reflection(user):
     mood = (data.get("mood") or "").strip()
     if not title or not body:
         return jsonify({"error": "Title and entry text are required."}), 400
-    new_id = db.execute(
-        "INSERT INTO reflections (user_id, title, body, mood) VALUES (?, ?, ?, ?)",
-        (user["id"], title, body, mood),
-    )
+    new_id = ReflectionModel.create(user["id"], title, body, mood)
     return jsonify({"id": new_id}), 201
 
 
@@ -47,9 +42,5 @@ def add_feedback():
         return jsonify({"error": "Ratings must be between 1 and 5."}), 400
     comments = (data.get("comments") or "").strip()
 
-    new_id = db.execute(
-        """INSERT INTO usability_feedback
-           (visitor_name, clarity_rating, identity_rating, comments) VALUES (?, ?, ?, ?)""",
-        (visitor_name, clarity_rating, identity_rating, comments),
-    )
+    new_id = FeedbackModel.create(visitor_name, clarity_rating, identity_rating, comments)
     return jsonify({"id": new_id}), 201

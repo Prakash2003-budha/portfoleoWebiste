@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 
 from auth import login_required
-from database import db
+from models import PortfolioModel
 
 bp = Blueprint("portfolio", __name__, url_prefix="/api/portfolio")
 
@@ -21,19 +21,13 @@ SECTIONS = {
 def _all_sections_for(user_id):
     result = {}
     for section, (table, _columns) in SECTIONS.items():
-        result[section] = db.fetchall(
-            f"SELECT * FROM {table} WHERE user_id = ? ORDER BY id DESC", (user_id,)
-        )
+        result[section] = PortfolioModel.list_section(table, user_id)
     return result
 
 
 @bp.get("/user/<int:user_id>")
 def portfolio_for_user(user_id):
-    owner = db.fetchone(
-        """SELECT profiles.*, users.full_name FROM profiles
-           JOIN users ON users.id = profiles.user_id WHERE profiles.user_id = ?""",
-        (user_id,),
-    )
+    owner = PortfolioModel.owner_profile(user_id)
     if not owner:
         return jsonify({"error": "No portfolio for that user."}), 404
     return jsonify({"owner": owner, "sections": _all_sections_for(user_id)})
@@ -57,12 +51,7 @@ def add_item(user, section):
     if not values[0]:
         return jsonify({"error": f"The first field of {section} is required."}), 400
 
-    placeholders = ", ".join(["?"] * (len(columns) + 1))
-    column_list = ", ".join(["user_id"] + columns)
-    new_id = db.execute(
-        f"INSERT INTO {table} ({column_list}) VALUES ({placeholders})",
-        tuple([user["id"]] + values),
-    )
+    new_id = PortfolioModel.add_item(table, user["id"], columns, values)
     return jsonify({"id": new_id}), 201
 
 
@@ -72,8 +61,8 @@ def delete_item(user, section, item_id):
     if section not in SECTIONS:
         return jsonify({"error": "Unknown portfolio section."}), 404
     table, _columns = SECTIONS[section]
-    row = db.fetchone(f"SELECT user_id FROM {table} WHERE id = ?", (item_id,))
+    row = PortfolioModel.get_owner_id(table, item_id)
     if not row or row["user_id"] != user["id"]:
         return jsonify({"error": "Not found."}), 404
-    db.execute(f"DELETE FROM {table} WHERE id = ?", (item_id,))
+    PortfolioModel.delete_item(table, item_id)
     return jsonify({"ok": True})

@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, make_response, request
 
 from auth import SESSION_COOKIE, create_session, current_user, destroy_session, login_required
-from database import db
+from models import UserModel
 from security import make_password_hash, verify_password
 
 bp = Blueprint("auth", __name__, url_prefix="/api")
@@ -18,17 +18,19 @@ def register():
         return jsonify({"error": "Name, email, and password are required."}), 400
     if len(password) < 6:
         return jsonify({"error": "Password must be at least 6 characters."}), 400
-    if db.fetchone("SELECT id FROM users WHERE lower(email) = lower(?)", (email,)):
+    if UserModel.exists_by_email(email):
         return jsonify({"error": "That email is already registered."}), 409
 
-    user_id = db.execute(
-        "INSERT INTO users (full_name, email, password_hash) VALUES (?, ?, ?)",
-        (full_name, email, make_password_hash(password)),
-    )
+    user_id = UserModel.create(full_name, email, make_password_hash(password))
     # Every new account starts with a draft profile, same as the original prototype.
-    db.execute(
-        "INSERT INTO profiles (user_id, display_name, headline, location, bio) VALUES (?, ?, ?, ?, ?)",
-        (user_id, full_name, "New member building a full-person portfolio", "", ""),
+    from models import ProfileModel
+
+    ProfileModel.upsert_for_user(
+        user_id,
+        full_name,
+        "New member building a full-person portfolio",
+        "",
+        "",
     )
 
     token = create_session(user_id)
@@ -43,7 +45,7 @@ def login():
     email = (data.get("email") or "").strip()
     password = data.get("password") or ""
 
-    user = db.fetchone("SELECT * FROM users WHERE lower(email) = lower(?)", (email,))
+    user = UserModel.find_by_email(email)
     if not user or not verify_password(password, user["password_hash"]):
         return jsonify({"error": "Invalid email or password."}), 401
 
