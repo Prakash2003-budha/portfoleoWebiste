@@ -23,11 +23,11 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret")
 
     SMTP_PROVIDER = os.getenv("SMTP_PROVIDER", "")
-    SMTP_HOST = os.getenv("SMTP_HOST", "")
+    SMTP_HOST = os.getenv("SMTP_HOST", "").strip()
     SMTP_PORT = int(os.getenv("SMTP_PORT", "465")) if os.getenv("SMTP_PORT") else 465
-    SMTP_USER = os.getenv("SMTP_USER", "")
-    SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
-    SMTP_FROM = os.getenv("SMTP_FROM", os.getenv("SMTP_PROVIDER", "no-reply@portfoleo.local"))
+    SMTP_USER = os.getenv("SMTP_USER", "").strip()
+    SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "").strip().strip('"').strip("'")
+    SMTP_FROM = os.getenv("SMTP_FROM", os.getenv("SMTP_PROVIDER", "no-reply@portfoleo.local")).strip()
     SMTP_USE_SSL = os.getenv("SMTP_USE_SSL", "true").lower() in ("true", "1", "yes")
     SMTP_STARTTLS = os.getenv("SMTP_STARTTLS", "false").lower() in ("true", "1", "yes")
-    ACTIVATION_BASE_URL = os.getenv("ACTIVATION_BASE_URL", "http://127.0.0.1:5500")
+    ACTIVATION_BASE_URL = os.getenv("ACTIVATION_BASE_URL", "http://127.0.0.1:5500").strip()

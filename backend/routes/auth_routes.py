@@ -32,7 +32,17 @@ def register():
         "",
     )
 
-    send_activation_email(email, full_name, activation_token)
+    sent = send_activation_email(email, full_name, activation_token)
+    if not sent:
+        return (
+            jsonify(
+                {
+                    "error": "Registration saved, but activation email could not be delivered. Check SMTP settings.",
+                }
+            ),
+            500,
+        )
+
     return jsonify(
         {
             "id": user_id,

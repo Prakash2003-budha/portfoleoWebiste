@@ -15,19 +15,25 @@ def send_email(subject, recipient, body):
     message["To"] = recipient
     message.set_content(body)
 
-    if Config.SMTP_USE_SSL:
-        server = smtplib.SMTP_SSL(Config.SMTP_HOST, Config.SMTP_PORT)
-    else:
-        server = smtplib.SMTP(Config.SMTP_HOST, Config.SMTP_PORT)
-        if Config.SMTP_STARTTLS:
-            server.starttls()
+    try:
+        if Config.SMTP_USE_SSL:
+            server = smtplib.SMTP_SSL(Config.SMTP_HOST, Config.SMTP_PORT)
+        else:
+            server = smtplib.SMTP(Config.SMTP_HOST, Config.SMTP_PORT)
+            server.ehlo()
+            if Config.SMTP_STARTTLS:
+                server.starttls()
+                server.ehlo()
 
-    if Config.SMTP_USER and Config.SMTP_PASSWORD:
-        server.login(Config.SMTP_USER, Config.SMTP_PASSWORD)
+        if Config.SMTP_USER and Config.SMTP_PASSWORD:
+            server.login(Config.SMTP_USER, Config.SMTP_PASSWORD)
 
-    server.send_message(message)
-    server.quit()
-    return True
+        server.send_message(message)
+        server.quit()
+        return True
+    except Exception as exc:
+        print(f"[EMAIL ERROR] {exc}")
+        return False
 
 
 def send_activation_email(recipient_email, full_name, activation_token):
