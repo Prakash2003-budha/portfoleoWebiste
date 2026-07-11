@@ -4,7 +4,7 @@ app.py
 Backend entrypoint. This is now a pure JSON API (no HTML rendering) —
 the frontend is a separate static app in ../frontend that talks to
 these endpoints over fetch(). Run with:
-
+kjhk
     python3 app.py
 
 Environment variables (same as the original prototype):
@@ -24,7 +24,8 @@ def create_app():
     app = Flask(__name__)
     app.url_map.strict_slashes = False
 
-    cors_origin = os.getenv("CORS_ORIGIN", "*")
+    default_cors_origin = "http://127.0.0.1:5500"
+    cors_origin = os.getenv("CORS_ORIGIN", default_cors_origin).strip() or default_cors_origin
 
     @app.after_request
     def add_cors_headers(response):
