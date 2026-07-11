@@ -21,6 +21,8 @@ CREATE TABLE users (
   full_name TEXT NOT NULL,
   email TEXT NOT NULL UNIQUE,
   password_hash TEXT NOT NULL,
+  activated INTEGER NOT NULL DEFAULT 0,
+  activation_token TEXT,
   role TEXT NOT NULL DEFAULT 'student',
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
@@ -121,8 +123,8 @@ connection = sqlite3.connect(os.path.join(BASE_DIR, "portfolio_weirdos.db"))
 connection.executescript(schema)
 cursor = connection.cursor()
 cursor.execute(
-    "INSERT INTO users (id, full_name, email, password_hash, role) VALUES (?, ?, ?, ?, ?)",
-    (1, "Sujit Khadgi", "sujit@example.com", PASSWORD_HASH, "student"),
+    "INSERT INTO users (id, full_name, email, password_hash, activated, role) VALUES (?, ?, ?, ?, ?, ?)",
+    (1, "Sujit Khadgi", "sujit@example.com", PASSWORD_HASH, 1, "student"),
 )
 cursor.execute(
     "INSERT INTO profiles (user_id, display_name, headline, location, bio) VALUES (?, ?, ?, ?, ?)",

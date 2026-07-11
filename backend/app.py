@@ -4,7 +4,6 @@ app.py
 Backend entrypoint. This is now a pure JSON API (no HTML rendering) —
 the frontend is a separate static app in ../frontend that talks to
 these endpoints over fetch(). Run with:
-kjhk
     python3 app.py
 
 Environment variables (same as the original prototype):
@@ -13,22 +12,18 @@ Environment variables (same as the original prototype):
     CORS_ORIGIN origin allowed to call this API, default http://127.0.0.1:5500
 """
 
-import os
-
-from dotenv import load_dotenv
 from flask import Flask, jsonify
 
-load_dotenv()
+from config import Config
 
-APP_NAME = "Portfolios for Weirdos API"
+APP_NAME = Config.APP_NAME
 
 
 def create_app():
     app = Flask(__name__)
     app.url_map.strict_slashes = False
 
-    default_cors_origin = "http://127.0.0.1:5500"
-    cors_origin = os.getenv("CORS_ORIGIN", default_cors_origin).strip() or default_cors_origin
+    cors_origin = Config.CORS_ORIGIN
 
     @app.after_request
     def add_cors_headers(response):
@@ -62,6 +57,5 @@ def create_app():
 app = create_app()
 
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", "5000"))
-    print(f"{APP_NAME} running at http://127.0.0.1:{port}")
-    app.run(host="127.0.0.1", port=port, debug=True)
+    print(f"{APP_NAME} running at http://127.0.0.1:{Config.PORT}")
+    app.run(host="127.0.0.1", port=Config.PORT, debug=True)

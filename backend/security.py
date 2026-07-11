@@ -30,3 +30,7 @@ def verify_password(password, stored_hash):
 
 def new_session_token():
     return secrets.token_urlsafe(32)
+
+
+def new_activation_token():
+    return secrets.token_urlsafe(32)

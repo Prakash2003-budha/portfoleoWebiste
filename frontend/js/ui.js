@@ -74,14 +74,6 @@ async function renderTopbar() {
   return user;
 }
 
-function injectPageStyles(id, css) {
-  if (document.getElementById(id)) return;
-  const style = document.createElement("style");
-  style.id = id;
-  style.textContent = css;
-  document.head.appendChild(style);
-}
-
 function setView(html) {
   document.getElementById("view").innerHTML = html;
 }

@@ -81,11 +81,22 @@ class UserModel:
         return db.fetchone("SELECT id, email, full_name, role FROM users WHERE id = ?", (user_id,))
 
     @classmethod
-    def create(cls, full_name, email, password_hash):
+    def create(cls, full_name, email, password_hash, activation_token=None):
         return db.execute(
-            "INSERT INTO users (full_name, email, password_hash) VALUES (?, ?, ?)",
-            (full_name, email, password_hash),
+            "INSERT INTO users (full_name, email, password_hash, activated, activation_token) VALUES (?, ?, ?, ?, ?)",
+            (full_name, email, password_hash, False, activation_token),
         )
+
+    @classmethod
+    def activate(cls, token):
+        return db.execute(
+            "UPDATE users SET activated = ? WHERE activation_token = ? AND activated = ?",
+            (True, token, False),
+        )
+
+    @classmethod
+    def find_by_activation_token(cls, token):
+        return db.fetchone("SELECT * FROM users WHERE activation_token = ?", (token,))
 
 
 class ProfileModel:
