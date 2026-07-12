@@ -2,6 +2,7 @@
 
 route("/login", renderLogin);
 route("/register", renderRegister);
+route("/activate", renderActivate);
 route("/activate/:token", renderActivate);
 route("/dashboard", renderDashboard);
 route("/profiles", renderProfiles);
@@ -14,10 +15,10 @@ route("/feedback", renderFeedback);
 async function boot() {
   const user = await renderTopbar();
   const path = currentPath();
-  const publicPaths = ["/login", "/register", "/profiles", "/feedback"];
+  const publicPaths = ["/login", "/register", "/activate", "/profiles", "/feedback"];
   const isProfileDetail = /^\/profile\/\d+$/.test(path);
   const isPortfolioView = /^\/portfolio\/\d+$/.test(path);
-  const isActivation = /^\/activate\/[A-Za-z0-9_-]+$/.test(path);
+  const isActivation = /^\/activate(\/[A-Za-z0-9_-]+)?$/.test(path);
 
   if (!user && !publicPaths.includes(path) && !isProfileDetail && !isPortfolioView && !isActivation) {
     navigate("/login");

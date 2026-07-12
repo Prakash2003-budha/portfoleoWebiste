@@ -26,8 +26,7 @@ function renderRegister() {
         email: form.get("email"),
         password: form.get("password"),
       });
-      await renderTopbar();
-      navigate("/profile/edit");
+      navigate("/activate");
     } catch (err) {
       document.getElementById("register-alert").innerHTML = `<p class="alert">${esc(err.message)}</p>`;
     }

@@ -32,5 +32,10 @@ def new_session_token():
     return secrets.token_urlsafe(32)
 
 
+def new_activation_code(length=6):
+    digits = "0123456789"
+    return "".join(secrets.choice(digits) for _ in range(length))
+
+
 def new_activation_token():
-    return secrets.token_urlsafe(32)
+    return new_activation_code()

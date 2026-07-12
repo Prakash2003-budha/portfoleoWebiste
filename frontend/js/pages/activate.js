@@ -1,41 +1,67 @@
 async function renderActivate(params) {
-  const token = params.token;
-  let message = "Activating your account...";
-  let title = "Account activation";
-  let status = "pending";
+  const code = params.token ? decodeURIComponent(params.token) : "";
 
-  try {
-    const result = await api.get(`/activate/${encodeURIComponent(token)}`);
-    message = result.message || "Your account is now activated. You can log in.";
-    title = "Activation successful";
-    status = "success";
-  } catch (err) {
-    message = err.message || "Activation failed. Please try again or contact support.";
-    title = "Activation failed";
-    status = "error";
+  function renderForm() {
+    setView(`
+      <section class="auth-layout">
+        <div class="auth-copy">
+          <span class="eyebrow">Activate your account</span>
+          <h1>Enter the one-time activation code from your email.</h1>
+          <p class="lede">A code was emailed to you after registration. Paste it here to complete activation.</p>
+        </div>
+        <form id="activate-form" class="form-card">
+          <h2>Activation code</h2>
+          <div id="activate-alert"></div>
+          <label>Code<input name="code" type="text" inputmode="numeric" maxlength="6" minlength="6" value="${esc(code)}" required></label>
+          <button class="button" type="submit">Activate account</button>
+          <p class="form-note">If you did not receive the email, check your spam folder or try registering again.</p>
+        </form>
+      </section>`);
   }
 
-  setView(`
-    <section class="auth-layout">
-      <div class="auth-copy">
-        <span class="eyebrow">${esc(title)}</span>
-        <h1>${esc(message)}</h1>
-        <p class="lede">
-          ${status === "success"
-            ? "Your account is activated and ready to use. Continue to sign in and finish your public profile."
-            : "The activation link could not be processed. Try again, or open the email and click the link once more."}
-        </p>
-      </div>
-      <div class="form-card status-card ${status}">
-        <div class="status-icon">${status === "success" ? "✔" : "⚠"}</div>
-        <div class="status-details">
-          <p class="status-label">${status === "success" ? "Activation complete" : "Activation issue"}</p>
-          <p>${esc(message)}</p>
+  async function activateAccount(codeValue) {
+    const result = await api.post("/activate", { code: codeValue });
+    setView(`
+      <section class="auth-layout">
+        <div class="auth-copy">
+          <span class="eyebrow">Activation successful</span>
+          <h1>Your account is activated.</h1>
+          <p class="lede">You can now sign in and continue building your profile.</p>
         </div>
-        <div class="status-actions">
-          <a class="button" href="#/login">Sign in</a>
-          ${status === "error" ? '<a class="button ghost" href="#/register">Register again</a>' : ''}
+        <div class="form-card status-card success">
+          <div class="status-icon">✔</div>
+          <div class="status-details">
+            <p class="status-label">Activation complete</p>
+            <p>${esc(result.message || "Your account is now activated. You can log in.")}</p>
+          </div>
+          <div class="status-actions">
+            <a class="button" href="#/login">Sign in</a>
+          </div>
         </div>
-      </div>
-    </section>`);
+      </section>`);
+  }
+
+  renderForm();
+
+  const form = document.getElementById("activate-form");
+  const alertContainer = document.getElementById("activate-alert");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    alertContainer.innerHTML = "";
+    const codeValue = form.code.value.trim();
+    try {
+      await activateAccount(codeValue);
+    } catch (err) {
+      alertContainer.innerHTML = `<p class="alert">${esc(err.message)}</p>`;
+    }
+  });
+
+  if (code) {
+    try {
+      await activateAccount(code);
+    } catch (err) {
+      alertContainer.innerHTML = `<p class="alert">${esc(err.message)}</p>`;
+    }
+  }
 }

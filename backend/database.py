@@ -63,7 +63,7 @@ class Database:
             cursor = connection.cursor()
             cursor.execute(self._sql(sql), params)
             connection.commit()
-            return cursor.lastrowid
+            return cursor.lastrowid if cursor.lastrowid else cursor.rowcount
         finally:
             connection.close()
 

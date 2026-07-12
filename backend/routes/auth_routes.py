@@ -3,7 +3,7 @@ from flask import Blueprint, jsonify, make_response, request
 from auth import SESSION_COOKIE, create_session, current_user, destroy_session, login_required
 from mailer import send_activation_email
 from models import ProfileModel, UserModel
-from security import make_password_hash, verify_password, new_activation_token
+from security import make_password_hash, verify_password, new_activation_code
 
 bp = Blueprint("auth", __name__, url_prefix="/api")
 
@@ -22,8 +22,8 @@ def register():
     if UserModel.exists_by_email(email):
         return jsonify({"error": "That email is already registered."}), 409
 
-    activation_token = new_activation_token()
-    user_id = UserModel.create(full_name, email, make_password_hash(password), activation_token)
+    activation_code = new_activation_code()
+    user_id = UserModel.create(full_name, email, make_password_hash(password), activation_code)
     ProfileModel.upsert_for_user(
         user_id,
         full_name,
@@ -32,7 +32,7 @@ def register():
         "",
     )
 
-    sent = send_activation_email(email, full_name, activation_token)
+    sent = send_activation_email(email, full_name, activation_code)
     if not sent:
         return (
             jsonify(
@@ -46,7 +46,7 @@ def register():
     return jsonify(
         {
             "id": user_id,
-            "message": "Registration successful. Check your email to activate your account.",
+            "message": "Registration successful. Check your email for a one-time activation code.",
         }
     ), 201
 
@@ -89,9 +89,22 @@ def me():
     return jsonify(user)
 
 
+@bp.post("/activate")
+def activate():
+    data = request.get_json(silent=True) or {}
+    code = (data.get("code") or "").strip()
+    if not code:
+        return jsonify({"error": "Activation code is required."}), 400
+
+    updated = UserModel.activate(code)
+    if not updated:
+        return jsonify({"error": "Invalid activation code."}), 400
+    return jsonify({"ok": True, "message": "Account activated. You can now log in."})
+
+
 @bp.route("/activate/<token>", methods=["GET"])
-def activate(token):
+def activate_link(token):
     updated = UserModel.activate(token)
     if not updated:
-        return jsonify({"error": "Invalid or expired activation token."}), 400
+        return jsonify({"error": "Invalid or expired activation code."}), 400
     return jsonify({"ok": True, "message": "Account activated. You can now log in."})
