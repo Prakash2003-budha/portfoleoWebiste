@@ -46,6 +46,14 @@
   color: var(--accent);
 }
 
+.meta-row .button {
+  color: #07110d;
+}
+
+.meta-row .button.ghost {
+  color: var(--text);
+}
+
 .user-label {
   color: var(--muted);
   font-size: 0.92rem;

@@ -9,8 +9,8 @@ function renderLogin() {
       <form id="login-form" class="form-card">
         <h2>Sign in</h2>
         <div id="login-alert"></div>
-        <label>Email<input name="email" type="email" value="sujit@example.com" required></label>
-        <label>Password<input name="password" type="password" value="password123" required></label>
+        <label>Email<input name="email" type="email" placeholder="you@example.com" required></label>
+        <label>Password<input name="password" type="password" placeholder="Enter your password" required></label>
         <button class="button" type="submit">Open dashboard</button>
         <p class="form-note">New user? <a href="#/register">Open the registration form</a>.</p>
       </form>

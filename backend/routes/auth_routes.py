@@ -19,8 +19,36 @@ def register():
         return jsonify({"error": "Name, email, and password are required."}), 400
     if len(password) < 6:
         return jsonify({"error": "Password must be at least 6 characters."}), 400
-    if UserModel.exists_by_email(email):
-        return jsonify({"error": "That email is already registered."}), 409
+
+    existing = UserModel.find_by_email(email)
+    if existing:
+        if existing["activated"]:
+            return jsonify({"error": "That email is already registered. Try logging in instead."}), 409
+
+        # Registered before but never activated (e.g. they closed the tab,
+        # lost the email, or the previous attempt failed). Reissue a fresh
+        # code instead of dead-ending them with a plain error.
+        activation_code = new_activation_code()
+        UserModel.resend_activation(existing["id"], activation_code)
+
+        sent = send_activation_email(email, existing["full_name"], activation_code)
+        if not sent:
+            return (
+                jsonify(
+                    {
+                        "error": "We couldn't resend the activation email. Check SMTP settings and try again.",
+                    }
+                ),
+                500,
+            )
+
+        return jsonify(
+            {
+                "id": existing["id"],
+                "pending_activation": True,
+                "message": "That email was already registered but not activated yet. We've sent a fresh code — check your inbox.",
+            }
+        ), 200
 
     activation_code = new_activation_code()
     user_id = UserModel.create(full_name, email, make_password_hash(password), activation_code)
@@ -46,6 +74,7 @@ def register():
     return jsonify(
         {
             "id": user_id,
+            "pending_activation": True,
             "message": "Registration successful. Check your email for a one-time activation code.",
         }
     ), 201

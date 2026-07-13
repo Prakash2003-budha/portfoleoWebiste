@@ -88,6 +88,13 @@ class UserModel:
         )
 
     @classmethod
+    def resend_activation(cls, user_id, activation_token):
+        return db.execute(
+            "UPDATE users SET activation_token = ? WHERE id = ? AND activated = ?",
+            (activation_token, user_id, False),
+        )
+
+    @classmethod
     def activate(cls, token):
         return db.execute(
             "UPDATE users SET activated = ? WHERE activation_token = ? AND activated = ?",

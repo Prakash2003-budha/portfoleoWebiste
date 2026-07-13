@@ -1,20 +1,9 @@
-let PORTFOLIO_SCHEMA = null;
 let activeSection = "education";
-
-async function loadPortfolioSchema() {
-  if (!PORTFOLIO_SCHEMA) {
-    PORTFOLIO_SCHEMA = await api.get("/portfolio/schema");
-  }
-  return PORTFOLIO_SCHEMA;
-}
-
-function getSectionConfig(section) {
-  return PORTFOLIO_SCHEMA ? PORTFOLIO_SCHEMA[section] : null;
-}
 
 async function renderPortfolio(params) {
   const viewingUserId = params && params.userId;
   let user = null;
+  
   try {
     user = await api.get("/me");
   } catch (err) {
@@ -45,11 +34,9 @@ async function renderPortfolio(params) {
   }
 
   const tabs = Object.entries(window.getPortfolioSchema())
-    .map(
-      ([key, cfg]) =>
-        `<button data-section="${key}" class="${key === activeSection ? "active" : ""}">${esc(cfg.label)}</button>`
-    )
-    .join("");
+    .map(([key, cfg]) => 
+      `<button data-section="${key}" class="${key === activeSection ? "active" : ""}">${esc(cfg.label)}</button>`
+    ).join("");
 
   setView(`
     <section class="directory-hero">
@@ -60,13 +47,18 @@ async function renderPortfolio(params) {
     <section class="portfolio-editor">
       <div class="tabs">${tabs}</div>
       <div id="section-body"></div>
-    </section>`);
+    </section>
+  `);
 
   document.querySelectorAll(".tabs button").forEach((btn) => {
     btn.addEventListener("click", () => {
       activeSection = btn.dataset.section;
       renderSectionBody(sections, editable);
-      document.querySelectorAll(".tabs button").forEach((b) => b.classList.toggle("active", b === btn));
+      
+      // Update active tab styling
+      document.querySelectorAll(".tabs button").forEach((b) => {
+        b.classList.toggle("active", b === btn);
+      });
     });
   });
 
@@ -76,43 +68,39 @@ async function renderPortfolio(params) {
 function renderSectionBody(sections, editable) {
   const cfg = window.getSectionConfig(activeSection);
   const rows = sections[activeSection] || [];
-  const items =
-    rows
-      .map(
-        (row) => `<li>
+  
+  const items = rows.length > 0 
+    ? rows.map((row) => `
+      <li>
         <div>
           <strong>${esc(row[cfg.primary])}</strong>
           <span>${esc(row[cfg.secondary] || "")}</span>
         </div>
         ${editable ? `<button class="remove-btn" data-id="${row.id}">Remove</button>` : ""}
-      </li>`
-      )
-      .join("") || "<li>No records yet.</li>";
+      </li>`).join("") 
+    : "<li><span>No records yet.</span></li>";
 
-  const formHtml = editable
-    ? `<form id="section-form" class="inline-form">
-        ${cfg.fields
-          .map(
-            (f) =>
-              `<label>${esc(f.label)}${f.required ? " *" : ""}
-                ${
-                  f.name === "description" || f.name === "identity_link"
-                    ? `<textarea name="${f.name}" rows="2" ${f.required ? "required" : ""}></textarea>`
-                    : `<input name="${f.name}" type="${f.type || "text"}" ${f.required ? "required" : ""}>`
-                }
-              </label>`
-          )
-          .join("")}
-        <button class="button" type="submit">Add ${esc(cfg.label.toLowerCase())} record</button>
-      </form>`
-    : "";
+  const formHtml = editable ? `
+    <form id="section-form" class="inline-form">
+      ${cfg.fields.map((f) => `
+        <label>
+          ${esc(f.label)}${f.required ? " *" : ""}
+          ${f.name === "description" || f.name === "identity_link"
+            ? `<textarea name="${f.name}" rows="3" ${f.required ? "required" : ""}></textarea>`
+            : `<input name="${f.name}" type="${f.type || "text"}" ${f.required ? "required" : ""}>`
+          }
+        </label>
+      `).join("")}
+      <button class="button" type="submit">Add ${esc(cfg.label.toLowerCase())} record</button>
+    </form>` : "";
 
   document.getElementById("section-body").innerHTML = `
     <article class="detail-panel wide">
-      <span>${esc(cfg.label)}</span>
+      ${formHtml}
+      <h3 style="margin-top: 24px; margin-bottom: 12px; color: var(--text);">${esc(cfg.label)} Entries</h3>
       <ul class="item-list">${items}</ul>
     </article>
-    ${formHtml}`;
+  `;
 
   if (editable) {
     document.getElementById("section-form").addEventListener("submit", async (e) => {
@@ -120,9 +108,10 @@ function renderSectionBody(sections, editable) {
       const form = new FormData(e.target);
       const payload = {};
       cfg.fields.forEach((f) => (payload[f.name] = form.get(f.name)));
+      
       try {
         await api.post(`/portfolio/${activeSection}`, payload);
-        renderPortfolio({});
+        renderPortfolio({}); // Re-render to fetch and show new data
       } catch (err) {
         alert(err.message);
       }
