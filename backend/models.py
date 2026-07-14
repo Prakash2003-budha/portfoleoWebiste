@@ -218,6 +218,43 @@ class PortfolioModel:
         )
 
 
+class CanvasModel:
+    """Freeform 'poster / collage' layout: one row per user holding a JSON
+    array of positioned elements (text blocks, photos, portfolio-data
+    blocks). The frontend owns the shape of each element; the backend just
+    stores and returns the blob so the design surface can evolve without
+    schema migrations for every new element type.
+    """
+
+    DEFAULT_WIDTH = 1000
+    DEFAULT_HEIGHT = 1300
+    DEFAULT_BACKGROUND = "#ffffff"
+
+    @classmethod
+    def get_by_user(cls, user_id):
+        return db.fetchone("SELECT * FROM canvas_layouts WHERE user_id = ?", (user_id,))
+
+    @classmethod
+    def upsert(cls, user_id, canvas_width, canvas_height, background_color, elements_json):
+        existing = cls.get_by_user(user_id)
+        if existing:
+            db.execute(
+                """UPDATE canvas_layouts
+                   SET canvas_width = ?, canvas_height = ?, background_color = ?,
+                       elements = ?, updated_at = CURRENT_TIMESTAMP
+                   WHERE user_id = ?""",
+                (canvas_width, canvas_height, background_color, elements_json, user_id),
+            )
+            return existing["id"]
+
+        return db.execute(
+            """INSERT INTO canvas_layouts
+               (user_id, canvas_width, canvas_height, background_color, elements)
+               VALUES (?, ?, ?, ?, ?)""",
+            (user_id, canvas_width, canvas_height, background_color, elements_json),
+        )
+
+
 class FeedbackModel:
     @classmethod
     def create(cls, visitor_name, clarity_rating, identity_rating, comments):

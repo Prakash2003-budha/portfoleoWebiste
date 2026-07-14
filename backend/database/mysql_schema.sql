@@ -1,6 +1,7 @@
 CREATE DATABASE IF NOT EXISTS portfolio_weirdos CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE portfolio_weirdos;
 
+DROP TABLE IF EXISTS canvas_layouts;
 DROP TABLE IF EXISTS usability_feedback;
 DROP TABLE IF EXISTS reflections;
 DROP TABLE IF EXISTS habits;
@@ -106,6 +107,17 @@ CREATE TABLE usability_feedback (
   identity_rating TINYINT NOT NULL CHECK (identity_rating BETWEEN 1 AND 5),
   comments TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE canvas_layouts (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL UNIQUE,
+  canvas_width INT NOT NULL DEFAULT 1000,
+  canvas_height INT NOT NULL DEFAULT 1300,
+  background_color VARCHAR(20) NOT NULL DEFAULT '#ffffff',
+  elements LONGTEXT NOT NULL,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 INSERT INTO users (id, full_name, email, password_hash, role) VALUES

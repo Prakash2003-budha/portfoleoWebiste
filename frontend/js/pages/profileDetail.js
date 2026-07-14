@@ -18,7 +18,7 @@ async function renderProfileDetail(params) {
         <article class="detail-panel wide"><span>About</span><p>${esc(row.bio || "This person has not written a bio yet.")}</p></article>
       </div>
       <div class="hero-actions">
-        <a class="button ghost" href="#/portfolio/${row.user_id}">View full portfolio evidence</a>
+        <a class="button ghost" href="#/portfolio/${row.user_id}">View personal canvas</a>
       </div>
     </section>`);
 }

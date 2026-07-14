@@ -37,7 +37,9 @@ def portfolio_mine(user):
 def add_item(user, section):
     if section not in PortfolioModel.SECTIONS:
         return jsonify({"error": "Unknown portfolio section."}), 404
-    table, columns = PortfolioModel.SECTIONS[section]
+    cfg = PortfolioModel.SECTIONS[section]
+    table = section
+    columns = [f["name"] for f in cfg["fields"]]
     data = request.get_json(silent=True) or {}
     values = [data.get(col) for col in columns]
 

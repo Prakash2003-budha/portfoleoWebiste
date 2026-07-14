@@ -46,11 +46,13 @@ def create_app():
     from routes.profile_routes import bp as profile_bp
     from routes.portfolio_routes import bp as portfolio_bp
     from routes.reflection_routes import bp as reflection_bp
+    from routes.canvas_routes import bp as canvas_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(profile_bp)
     app.register_blueprint(portfolio_bp)
     app.register_blueprint(reflection_bp)
+    app.register_blueprint(canvas_bp)
 
     return app
 

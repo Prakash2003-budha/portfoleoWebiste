@@ -23,6 +23,19 @@ def migrate_sqlite_db():
         print("Adding activation_token column to users table")
         cursor.execute("ALTER TABLE users ADD COLUMN activation_token TEXT")
 
+    cursor.execute(
+        """CREATE TABLE IF NOT EXISTS canvas_layouts (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              user_id INTEGER NOT NULL UNIQUE,
+              canvas_width INTEGER NOT NULL DEFAULT 1000,
+              canvas_height INTEGER NOT NULL DEFAULT 1300,
+              background_color TEXT NOT NULL DEFAULT '#ffffff',
+              elements TEXT NOT NULL DEFAULT '[]',
+              updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+              FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+           )"""
+    )
+
     connection.commit()
     connection.close()
     print("Migration complete.")
