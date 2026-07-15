@@ -25,9 +25,6 @@ def register():
         if existing["activated"]:
             return jsonify({"error": "That email is already registered. Try logging in instead."}), 409
 
-        # Registered before but never activated (e.g. they closed the tab,
-        # lost the email, or the previous attempt failed). Reissue a fresh
-        # code instead of dead-ending them with a plain error.
         activation_code = new_activation_code()
         UserModel.resend_activation(existing["id"], activation_code)
 
