@@ -8,7 +8,7 @@ from models import CanvasModel, ProfileModel
 bp = Blueprint("canvas", __name__, url_prefix="/api/canvas")
 
 MAX_ELEMENTS = 300
-MAX_PAYLOAD_CHARS = 15_000_000  # generous headroom for a handful of base64 photos
+MAX_PAYLOAD_CHARS = 15_000_000 
 MIN_CANVAS = 200
 MAX_CANVAS = 4000
 
