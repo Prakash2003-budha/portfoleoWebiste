@@ -51,8 +51,7 @@ async function renderTopbar() {
       <a href="#/dashboard">Dashboard</a>
       <a href="#/profile/edit">Edit My Profile</a>
       <a href="#/profiles">View All Profiles</a>
-      <a href="#/portfolio">My Wall</a>
-      <a href="#/studio" class="nav-cta">+ New Post</a>
+      <a href="#/portfolio">Portfolio</a>
       <a href="#/feedback">Feedback</a>`;
     actions.innerHTML = `
       <span class="user-label">${esc(user.full_name)}</span>
