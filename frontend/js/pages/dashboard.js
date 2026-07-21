@@ -43,8 +43,9 @@ async function renderDashboard() {
       <article class="stat-card"><span>Place</span><p>${esc(profile.location || "Add your location")}</p></article>
     </section>
     <section class="quick-actions">
+      <a class="action-tile" href="#/studio"><strong>Open the Studio</strong><span>Design a new post with text, shapes, images, and freehand drawing.</span></a>
+      <a class="action-tile" href="#/portfolio"><strong>View My Wall</strong><span>See every post you've made, laid out as a visual grid.</span></a>
       <a class="action-tile" href="#/profile/edit"><strong>Edit My Profile</strong><span>Change your name, headline, location, and bio.</span></a>
-      <a class="action-tile" href="${myProfileUrl}"><strong>View My Profile</strong><span>See your public profile exactly like other users see it.</span></a>
       <a class="action-tile" href="#/profiles"><strong>View Created Profiles</strong><span>Browse profiles created by all registered users.</span></a>
     </section>
     <section class="workbench">

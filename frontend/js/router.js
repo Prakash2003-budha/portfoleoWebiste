@@ -29,6 +29,9 @@ function currentPath() {
 }
 
 async function resolve() {
+  if (typeof studioCanvas !== "undefined" && studioCanvas && typeof teardownStudio === "function") {
+    teardownStudio();
+  }
   const path = currentPath();
   for (const r of routes) {
     const match = path.match(r.regex);

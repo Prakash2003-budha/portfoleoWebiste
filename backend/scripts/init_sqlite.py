@@ -7,6 +7,7 @@ PASSWORD_HASH = "pbkdf2_sha256$706f7274666f6c696f5f666f725f77656972646f735f73656
 schema = """
 DROP TABLE IF EXISTS usability_feedback;
 DROP TABLE IF EXISTS reflections;
+DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS habits;
 DROP TABLE IF EXISTS identity_traits;
 DROP TABLE IF EXISTS achievements;
@@ -92,6 +93,19 @@ CREATE TABLE habits (
   name TEXT NOT NULL,
   frequency TEXT,
   identity_link TEXT,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE posts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  title TEXT NOT NULL DEFAULT 'Untitled post',
+  canvas_json TEXT NOT NULL,
+  thumbnail TEXT NOT NULL,
+  width INTEGER NOT NULL DEFAULT 1080,
+  height INTEGER NOT NULL DEFAULT 1080,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -186,6 +200,33 @@ cursor.executemany(
         (1, "Collecting odd project ideas", "Weekly", "Keeps the portfolio connected to curiosity and non-traditional learning."),
         (1, "Writing reflection notes", "After milestones", "Turns personal development into structured evidence."),
     ],
+)
+import json as _json
+
+_sample_canvas = _json.dumps({
+    "version": "5.3.0",
+    "background": "#1b6f5c",
+    "objects": [
+        {"type": "textbox", "left": 90, "top": 320, "width": 900, "text": "Sujit is\nstill becoming.",
+         "fontFamily": "Inter", "fontSize": 96, "fontWeight": 800, "fill": "#f7f3ea"},
+        {"type": "textbox", "left": 90, "top": 640, "width": 700, "text": "Welcome to my wall — made in the Studio, not a form.",
+         "fontFamily": "Inter", "fontSize": 32, "fill": "#d7f5e9"},
+    ],
+})
+_sample_thumb = (
+    "data:image/svg+xml;base64,"
+    + __import__("base64").b64encode(
+        b'<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080">'
+        b'<rect width="1080" height="1080" fill="#1b6f5c"/>'
+        b'<text x="80" y="420" font-family="sans-serif" font-size="96" font-weight="800" fill="#f7f3ea">Sujit is</text>'
+        b'<text x="80" y="520" font-family="sans-serif" font-size="96" font-weight="800" fill="#f7f3ea">still becoming.</text>'
+        b'<text x="80" y="620" font-family="sans-serif" font-size="32" fill="#d7f5e9">Welcome to my wall - made in the Studio, not a form.</text>'
+        b'</svg>'
+    ).decode()
+)
+cursor.execute(
+    "INSERT INTO posts (user_id, title, canvas_json, thumbnail, width, height) VALUES (?, ?, ?, ?, ?, ?)",
+    (1, "Still becoming", _sample_canvas, _sample_thumb, 1080, 1080),
 )
 cursor.execute(
     "INSERT INTO reflections (user_id, title, body, mood) VALUES (?, ?, ?, ?)",

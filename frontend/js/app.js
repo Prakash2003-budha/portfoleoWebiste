@@ -10,6 +10,8 @@ route("/profile/edit", () => renderProfileForm());
 route("/profile/:id", renderProfileDetail);
 route("/portfolio", () => renderPortfolio({}));
 route("/portfolio/:userId", renderPortfolio);
+route("/studio", () => renderStudio({}));
+route("/studio/:id", renderStudio);
 route("/feedback", renderFeedback);
 
 async function boot() {

@@ -1,25 +1,24 @@
-let activeSection = "education";
+// portfolio.js
+// The "wall" — an Instagram/Canva-style grid of the visual posts someone has
+// made in the Studio, instead of a structured evidence form (education,
+// experience, skills...). Route names (#/portfolio, #/portfolio/:userId) are
+// kept as-is so existing links elsewhere in the app don't break.
 
 async function renderPortfolio(params) {
   const viewingUserId = params && params.userId;
-  let user = null;
-  
-  try {
-    user = await api.get("/me");
-  } catch (err) {
-    user = null;
-  }
+  const user = await api.get("/me").catch(() => null);
 
   let owner;
-  let sections;
+  let posts;
   let editable;
 
-  await window.loadPortfolioSchema();
-
   if (viewingUserId) {
-    const data = await api.get(`/portfolio/user/${viewingUserId}`);
-    owner = data.owner;
-    sections = data.sections;
+    const [ownerRow, postRows] = await Promise.all([
+      api.get(`/profiles/${viewingUserId}`).catch(() => null),
+      api.get(`/posts/user/${viewingUserId}`),
+    ]);
+    owner = ownerRow;
+    posts = postRows;
     editable = user && String(user.id) === String(viewingUserId);
   } else {
     if (!user) {
@@ -27,105 +26,60 @@ async function renderPortfolio(params) {
       return;
     }
     const profile = await api.get("/profile/me");
-    const data = await api.get("/portfolio/me");
+    posts = await api.get(`/posts/user/${user.id}`);
     owner = { ...profile, full_name: user.full_name };
-    sections = data.sections;
     editable = true;
   }
 
-  const tabs = Object.entries(window.getPortfolioSchema())
-    .map(([key, cfg]) => 
-      `<button data-section="${key}" class="${key === activeSection ? "active" : ""}">${esc(cfg.label)}</button>`
-    ).join("");
+  const name = (owner && (owner.display_name || owner.full_name)) || "This wall";
+  const heading = editable ? "Your wall." : `${name}'s wall.`;
+
+  const grid = posts.length
+    ? posts.map(postTileHtml).join("")
+    : `<div class="wall-empty">
+         <p>${editable ? "Nothing here yet — your first post is one click away." : "No posts here yet."}</p>
+         ${editable ? '<a class="button" href="#/studio">Create your first post</a>' : ""}
+       </div>`;
 
   setView(`
     <section class="directory-hero">
-      <span class="eyebrow">Portfolio evidence</span>
-      <h1>${esc(owner.display_name || owner.full_name || "Portfolio")}.</h1>
-      <p class="lede">${esc(owner.headline || "Structured evidence with space for identity.")}</p>
+      <span class="eyebrow">Visual wall</span>
+      <h1>${esc(heading)}</h1>
+      <p class="lede">Express yourself the way you actually would — on a canvas, not a form. Text, shapes, photos, and freehand doodles, laid out however you like.</p>
+      ${editable ? '<div class="hero-actions"><a class="button" href="#/studio">+ New post</a></div>' : ""}
     </section>
-    <section class="portfolio-editor">
-      <div class="tabs">${tabs}</div>
-      <div id="section-body"></div>
+    <section class="wall-section">
+      <div class="wall-grid">${grid}</div>
     </section>
   `);
 
-  document.querySelectorAll(".tabs button").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      activeSection = btn.dataset.section;
-      renderSectionBody(sections, editable);
-      
-      // Update active tab styling
-      document.querySelectorAll(".tabs button").forEach((b) => {
-        b.classList.toggle("active", b === btn);
-      });
-    });
-  });
-
-  renderSectionBody(sections, editable);
-}
-
-function renderSectionBody(sections, editable) {
-  const cfg = window.getSectionConfig(activeSection);
-  const rows = sections[activeSection] || [];
-  
-  const items = rows.length > 0 
-    ? rows.map((row) => `
-      <li>
-        <div>
-          <strong>${esc(row[cfg.primary])}</strong>
-          <span>${esc(row[cfg.secondary] || "")}</span>
-        </div>
-        ${editable ? `<button class="remove-btn" data-id="${row.id}">Remove</button>` : ""}
-      </li>`).join("") 
-    : "<li><span>No records yet.</span></li>";
-
-  const formHtml = editable ? `
-    <form id="section-form" class="inline-form">
-      ${cfg.fields.map((f) => `
-        <label>
-          ${esc(f.label)}${f.required ? " *" : ""}
-          ${f.name === "description" || f.name === "identity_link"
-            ? `<textarea name="${f.name}" rows="3" ${f.required ? "required" : ""}></textarea>`
-            : `<input name="${f.name}" type="${f.type || "text"}" ${f.required ? "required" : ""}>`
-          }
-        </label>
-      `).join("")}
-      <button class="button" type="submit">Add ${esc(cfg.label.toLowerCase())} record</button>
-    </form>` : "";
-
-  document.getElementById("section-body").innerHTML = `
-    <article class="detail-panel wide">
-      ${formHtml}
-      <h3 style="margin-top: 24px; margin-bottom: 12px; color: var(--text);">${esc(cfg.label)} Entries</h3>
-      <ul class="item-list">${items}</ul>
-    </article>
-  `;
-
   if (editable) {
-    document.getElementById("section-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const form = new FormData(e.target);
-      const payload = {};
-      cfg.fields.forEach((f) => (payload[f.name] = form.get(f.name)));
-      
-      try {
-        await api.post(`/portfolio/${activeSection}`, payload);
-        renderPortfolio({}); // Re-render to fetch and show new data
-      } catch (err) {
-        alert(err.message);
-      }
-    });
-
-    document.querySelectorAll(".remove-btn").forEach((btn) => {
-      btn.addEventListener("click", async () => {
+    document.querySelectorAll("[data-delete-post]").forEach((btn) => {
+      btn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!confirm("Delete this post? This can't be undone.")) return;
         try {
-          await api.del(`/portfolio/${activeSection}/${btn.dataset.id}`);
-          renderPortfolio({});
+          await api.del(`/posts/${btn.dataset.deletePost}`);
+          renderPortfolio(params);
         } catch (err) {
           alert(err.message);
         }
       });
     });
   }
+}
+
+function postTileHtml(post) {
+  const editLink = post.is_owner
+    ? `<a class="wall-tile-edit" href="#/studio/${post.id}" title="Edit">Edit</a>
+       <button class="wall-tile-delete" data-delete-post="${post.id}" title="Delete">&times;</button>`
+    : "";
+  return `<article class="wall-tile">
+    <img src="${post.thumbnail}" alt="${esc(post.title || "Untitled post")}" loading="lazy">
+    <div class="wall-tile-overlay">
+      <span>${esc(post.title || "Untitled post")}</span>
+      <div class="wall-tile-actions">${editLink}</div>
+    </div>
+  </article>`;
 }

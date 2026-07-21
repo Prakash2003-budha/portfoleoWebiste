@@ -23,6 +23,28 @@ def migrate_sqlite_db():
         print("Adding activation_token column to users table")
         cursor.execute("ALTER TABLE users ADD COLUMN activation_token TEXT")
 
+    cursor.execute(
+        """SELECT name FROM sqlite_master WHERE type='table' AND name='posts';"""
+    )
+    if not cursor.fetchone():
+        print("Creating posts table (visual Canva-style posts)")
+        cursor.execute(
+            """
+            CREATE TABLE posts (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              user_id INTEGER NOT NULL,
+              title TEXT NOT NULL DEFAULT 'Untitled post',
+              canvas_json TEXT NOT NULL,
+              thumbnail TEXT NOT NULL,
+              width INTEGER NOT NULL DEFAULT 1080,
+              height INTEGER NOT NULL DEFAULT 1080,
+              created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+              updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+              FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            )
+            """
+        )
+
     connection.commit()
     connection.close()
     print("Migration complete.")
