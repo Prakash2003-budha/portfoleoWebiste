@@ -32,7 +32,7 @@ async function renderDashboard() {
         </div>
       </div>
       <aside class="profile-summary">
-        <div class="avatar large">${esc(initials(profile.display_name || user.full_name))}</div>
+        ${avatarHtml({ display_name: profile.display_name || user.full_name, avatar_url: profile.avatar_url }, "large")}
         <h2>${esc(profile.display_name || user.full_name)}</h2>
         <p>${esc(profile.headline || "Your public headline is ready for editing.")}</p>
       </aside>

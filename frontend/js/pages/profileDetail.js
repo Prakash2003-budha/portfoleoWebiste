@@ -7,7 +7,7 @@ async function renderProfileDetail(params) {
   setView(`
     <section class="profile-page">
       <div class="profile-banner">
-        <div class="avatar xlarge">${esc(initials(row.display_name || row.full_name))}</div>
+        ${avatarHtml(row, "xlarge")}
         <span class="eyebrow">Public profile</span>
         <h1>${esc(row.display_name || row.full_name)}</h1>
         <p class="lede">${esc(row.headline || "A portfolio still becoming itself.")}</p>

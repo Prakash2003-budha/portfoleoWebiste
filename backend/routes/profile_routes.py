@@ -1,9 +1,13 @@
 from flask import Blueprint, jsonify, request
 
+import cloudinary_service
 from auth import current_user, login_required
 from models import ProfileModel, ReflectionModel
 
 bp = Blueprint("profiles", __name__, url_prefix="/api")
+
+ALLOWED_AVATAR_TYPES = {"image/png", "image/jpeg", "image/webp", "image/gif"}
+MAX_AVATAR_BYTES = 5 * 1024 * 1024  # 5MB
 
 
 @bp.get("/profiles")
@@ -46,6 +50,37 @@ def save_profile(user):
 
     profile_id = ProfileModel.upsert_for_user(user["id"], display_name, headline, location, bio)
     return jsonify({"id": profile_id})
+
+
+@bp.post("/profile/me/avatar")
+@login_required
+def upload_avatar(user):
+    if not cloudinary_service.is_configured():
+        return jsonify({
+            "error": "Photo uploads aren't set up yet. Add CLOUDINARY_CLOUD_NAME, "
+                     "CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET to backend/.env."
+        }), 503
+
+    file = request.files.get("avatar")
+    if not file or not file.filename:
+        return jsonify({"error": "Choose an image to upload."}), 400
+
+    if file.mimetype not in ALLOWED_AVATAR_TYPES:
+        return jsonify({"error": "Please upload a PNG, JPG, WEBP, or GIF image."}), 400
+
+    file.seek(0, 2)  # seek to end to measure size
+    size = file.tell()
+    file.seek(0)
+    if size > MAX_AVATAR_BYTES:
+        return jsonify({"error": "That image is too large. Please keep it under 5MB."}), 413
+
+    try:
+        secure_url, public_id = cloudinary_service.upload_avatar(file, user["id"])
+    except Exception as exc:  # pragma: no cover - network/service errors
+        return jsonify({"error": f"Upload failed: {exc}"}), 502
+
+    profile = ProfileModel.set_avatar(user["id"], secure_url, public_id)
+    return jsonify({"avatar_url": secure_url, "profile": profile})
 
 
 @bp.get("/dashboard")

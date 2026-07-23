@@ -1,17 +1,6 @@
 from database import db
 
 PORTFOLIO_SECTIONS = {
-    "education": {
-        "label": "Education",
-        "primary": "institution",
-        "secondary": "qualification",
-        "fields": [
-            {"name": "institution", "label": "Institution", "required": True},
-            {"name": "qualification", "label": "Qualification", "required": True},
-            {"name": "start_year", "label": "Start year", "type": "number"},
-            {"name": "end_year", "label": "End year", "type": "number"},
-        ],
-    },
     "experiences": {
         "label": "Experience",
         "primary": "title",
@@ -32,16 +21,6 @@ PORTFOLIO_SECTIONS = {
             {"name": "name", "label": "Skill", "required": True},
             {"name": "category", "label": "Category"},
             {"name": "confidence_level", "label": "Confidence (1-5)", "type": "number"},
-        ],
-    },
-    "achievements": {
-        "label": "Achievements",
-        "primary": "title",
-        "secondary": "description",
-        "fields": [
-            {"name": "title", "label": "Title", "required": True},
-            {"name": "description", "label": "Description"},
-            {"name": "achieved_on", "label": "Date", "type": "date"},
         ],
     },
     "identity_traits": {
@@ -145,6 +124,28 @@ class ProfileModel:
         )
 
     @classmethod
+    def set_avatar(cls, user_id, avatar_url, avatar_public_id=None):
+        """Save the Cloudinary URL (and public_id, so a later upload can
+        replace/delete the old asset) for this user's profile picture.
+        Creates a bare profile row first if one doesn't exist yet, so a
+        person can upload a photo before filling in the rest of the form.
+        """
+        existing = cls.get_by_user_id(user_id)
+        if not existing:
+            db.execute(
+                "INSERT INTO profiles (user_id, display_name, headline, location, bio, avatar_url, avatar_public_id) "
+                "VALUES (?, '', '', '', '', ?, ?)",
+                (user_id, avatar_url, avatar_public_id),
+            )
+            return cls.get_by_user_id(user_id)
+
+        db.execute(
+            "UPDATE profiles SET avatar_url = ?, avatar_public_id = ? WHERE user_id = ?",
+            (avatar_url, avatar_public_id, user_id),
+        )
+        return cls.get_by_user_id(user_id)
+
+    @classmethod
     def count_all(cls):
         return db.fetchone("SELECT COUNT(*) AS total FROM profiles")["total"]
 
@@ -216,6 +217,68 @@ class PortfolioModel:
                JOIN users ON users.id = profiles.user_id WHERE profiles.user_id = ?""",
             (user_id,),
         )
+
+
+class PostModel:
+    """Backs the Studio's visual posts (posts table). Each post is a saved
+    Fabric.js canvas: full editable JSON for the owner, plus a PNG thumbnail
+    everyone else can see on the person's Wall."""
+
+    @classmethod
+    def list_public(cls, limit=60):
+        return db.fetchall(
+            """SELECT posts.*, profiles.display_name, users.full_name
+               FROM posts
+               JOIN users ON users.id = posts.user_id
+               LEFT JOIN profiles ON profiles.user_id = posts.user_id
+               ORDER BY posts.id DESC LIMIT ?""",
+            (limit,),
+        )
+
+    @classmethod
+    def list_for_user(cls, user_id):
+        return db.fetchall(
+            """SELECT posts.*, profiles.display_name, users.full_name
+               FROM posts
+               JOIN users ON users.id = posts.user_id
+               LEFT JOIN profiles ON profiles.user_id = posts.user_id
+               WHERE posts.user_id = ?
+               ORDER BY posts.id DESC""",
+            (user_id,),
+        )
+
+    @classmethod
+    def get_by_id(cls, post_id):
+        return db.fetchone(
+            """SELECT posts.*, profiles.display_name, users.full_name
+               FROM posts
+               JOIN users ON users.id = posts.user_id
+               LEFT JOIN profiles ON profiles.user_id = posts.user_id
+               WHERE posts.id = ?""",
+            (post_id,),
+        )
+
+    @classmethod
+    def create(cls, user_id, title, canvas_json, thumbnail, width, height):
+        return db.execute(
+            """INSERT INTO posts (user_id, title, canvas_json, thumbnail, width, height)
+               VALUES (?, ?, ?, ?, ?, ?)""",
+            (user_id, title, canvas_json, thumbnail, width, height),
+        )
+
+    @classmethod
+    def update(cls, post_id, title, canvas_json, thumbnail, width, height):
+        return db.execute(
+            """UPDATE posts
+               SET title = ?, canvas_json = ?, thumbnail = ?, width = ?, height = ?,
+                   updated_at = CURRENT_TIMESTAMP
+               WHERE id = ?""",
+            (title, canvas_json, thumbnail, width, height, post_id),
+        )
+
+    @classmethod
+    def delete(cls, post_id):
+        return db.execute("DELETE FROM posts WHERE id = ?", (post_id,))
 
 
 class FeedbackModel:

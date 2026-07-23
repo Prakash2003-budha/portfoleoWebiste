@@ -10,10 +10,8 @@ DROP TABLE IF EXISTS reflections;
 DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS habits;
 DROP TABLE IF EXISTS identity_traits;
-DROP TABLE IF EXISTS achievements;
 DROP TABLE IF EXISTS skills;
 DROP TABLE IF EXISTS experiences;
-DROP TABLE IF EXISTS education;
 DROP TABLE IF EXISTS profiles;
 DROP TABLE IF EXISTS users;
 
@@ -35,16 +33,8 @@ CREATE TABLE profiles (
   headline TEXT NOT NULL,
   location TEXT,
   bio TEXT,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
-CREATE TABLE education (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_id INTEGER NOT NULL,
-  institution TEXT NOT NULL,
-  qualification TEXT NOT NULL,
-  start_year INTEGER,
-  end_year INTEGER,
+  avatar_url TEXT,
+  avatar_public_id TEXT,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -65,15 +55,6 @@ CREATE TABLE skills (
   name TEXT NOT NULL,
   category TEXT NOT NULL,
   confidence_level INTEGER NOT NULL CHECK (confidence_level BETWEEN 1 AND 5),
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
-CREATE TABLE achievements (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_id INTEGER NOT NULL,
-  title TEXT NOT NULL,
-  description TEXT,
-  achieved_on TEXT,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -144,110 +125,113 @@ CREATE TABLE canvas_layouts (
 
 import os
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-connection = sqlite3.connect(os.path.join(BASE_DIR, "portfolio_weirdos.db"))
-connection.executescript(schema)
-cursor = connection.cursor()
-cursor.execute(
-    "INSERT INTO users (id, full_name, email, password_hash, activated, role) VALUES (?, ?, ?, ?, ?, ?)",
-    (1, "Sujit Khadgi", "sujit@example.com", PASSWORD_HASH, 1, "student"),
-)
-cursor.execute(
-    "INSERT INTO profiles (user_id, display_name, headline, location, bio) VALUES (?, ?, ?, ?, ?)",
-    (
-        1,
-        "Sujit Khadgi",
-        "Computing student building a relational portfolio for full-person identity",
-        "Birmingham / Kathmandu",
-        "A portfolio that includes the formal evidence of skill and the more human details: habits, contradictions, creative energy, strengths, weaknesses, and reflections.",
-    ),
-)
-cursor.executemany(
-    "INSERT INTO education (user_id, institution, qualification, start_year, end_year) VALUES (?, ?, ?, ?, ?)",
-    [
-        (1, "Birmingham City University", "CMP6200 Individual Honours Project", 2025, 2026),
-        (1, "School of Computing and Digital Technology", "Undergraduate Computing pathway", 2024, 2026),
-    ],
-)
-cursor.execute(
-    "INSERT INTO experiences (user_id, title, organization, description, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?)",
-    (
-        1,
-        "Project Developer",
-        "Portfolio for Weirdos",
-        "Designed a prototype portfolio system that combines professional records with structured identity attributes.",
-        "2025-12-01",
-        None,
-    ),
-)
-cursor.executemany(
-    "INSERT INTO skills (user_id, name, category, confidence_level) VALUES (?, ?, ?, ?)",
-    [
-        (1, "Relational database design", "Technical", 4),
-        (1, "Human-centred design", "Design", 4),
-        (1, "Prototype development", "Technical", 4),
-        (1, "Reflective writing", "Identity", 5),
-    ],
-)
-cursor.execute(
-    "INSERT INTO achievements (user_id, title, description, achieved_on) VALUES (?, ?, ?, ?)",
-    (
-        1,
-        "Project interim report completed",
-        "Defined the problem, aims, objectives, scope, methodology, risks, and ethics for Portfolio for Weirdos.",
-        "2026-03-06",
-    ),
-)
-cursor.executemany(
-    "INSERT INTO identity_traits (user_id, trait_name, trait_type, description, visibility) VALUES (?, ?, ?, ?, ?)",
-    [
-        (1, "Creative outsider thinking", "strength", "Looks for unusual angles instead of only repeating standard portfolio formats.", "public"),
-        (1, "Overthinking useful details", "weakness", "Can spend too long polishing ideas, but it often reveals better design questions.", "public"),
-        (1, "Playful seriousness", "personality", "Takes meaningful work seriously without making the whole experience lifeless.", "public"),
-    ],
-)
-cursor.executemany(
-    "INSERT INTO habits (user_id, name, frequency, identity_link) VALUES (?, ?, ?, ?)",
-    [
-        (1, "Collecting odd project ideas", "Weekly", "Keeps the portfolio connected to curiosity and non-traditional learning."),
-        (1, "Writing reflection notes", "After milestones", "Turns personal development into structured evidence."),
-    ],
-)
-import json as _json
 
-_sample_canvas = _json.dumps({
-    "version": "5.3.0",
-    "background": "#1b6f5c",
-    "objects": [
-        {"type": "textbox", "left": 90, "top": 320, "width": 900, "text": "Sujit is\nstill becoming.",
-         "fontFamily": "Inter", "fontSize": 96, "fontWeight": 800, "fill": "#f7f3ea"},
-        {"type": "textbox", "left": 90, "top": 640, "width": 700, "text": "Welcome to my wall — made in the Studio, not a form.",
-         "fontFamily": "Inter", "fontSize": 32, "fill": "#d7f5e9"},
-    ],
-})
-_sample_thumb = (
-    "data:image/svg+xml;base64,"
-    + __import__("base64").b64encode(
-        b'<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080">'
-        b'<rect width="1080" height="1080" fill="#1b6f5c"/>'
-        b'<text x="80" y="420" font-family="sans-serif" font-size="96" font-weight="800" fill="#f7f3ea">Sujit is</text>'
-        b'<text x="80" y="520" font-family="sans-serif" font-size="96" font-weight="800" fill="#f7f3ea">still becoming.</text>'
-        b'<text x="80" y="620" font-family="sans-serif" font-size="32" fill="#d7f5e9">Welcome to my wall - made in the Studio, not a form.</text>'
-        b'</svg>'
-    ).decode()
-)
-cursor.execute(
-    "INSERT INTO posts (user_id, title, canvas_json, thumbnail, width, height) VALUES (?, ?, ?, ?, ?, ?)",
-    (1, "Still becoming", _sample_canvas, _sample_thumb, 1080, 1080),
-)
-cursor.execute(
-    "INSERT INTO reflections (user_id, title, body, mood) VALUES (?, ?, ?, ?)",
-    (1, "Why this portfolio exists", "Traditional portfolios show achievement, but they often miss the person behind the achievement. This prototype stores both.", "Focused"),
-)
-cursor.execute(
-    "INSERT INTO usability_feedback (visitor_name, clarity_rating, identity_rating, comments) VALUES (?, ?, ?, ?)",
-    ("Sample tester", 5, 5, "The portfolio makes the identity traits visible without losing structure."),
-)
-connection.commit()
-connection.close()
-print("Created portfolio_weirdos.db with seed login sujit@example.com / password123")
+def init_sqlite_db(path=None, seed=True):
+    """(Re)create the sqlite schema at `path` (defaults to SQLITE_PATH env
+    var, falling back to backend/portfolio_weirdos.db). Set seed=False to
+    get an empty-but-schema-correct database, e.g. for tests."""
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if path is None:
+        path = os.getenv("SQLITE_PATH") or os.path.join(base_dir, "portfolio_weirdos.db")
+
+    connection = sqlite3.connect(path)
+    connection.executescript(schema)
+
+    if not seed:
+        connection.commit()
+        connection.close()
+        print(f"Created empty schema at {path}")
+        return
+
+    cursor = connection.cursor()
+    cursor.execute(
+        "INSERT INTO users (id, full_name, email, password_hash, activated, role) VALUES (?, ?, ?, ?, ?, ?)",
+        (1, "Sujit Khadgi", "sujit@example.com", PASSWORD_HASH, 1, "student"),
+    )
+    cursor.execute(
+        "INSERT INTO profiles (user_id, display_name, headline, location, bio) VALUES (?, ?, ?, ?, ?)",
+        (
+            1,
+            "Sujit Khadgi",
+            "Computing student building a relational portfolio for full-person identity",
+            "Birmingham / Kathmandu",
+            "A portfolio that includes the formal evidence of skill and the more human details: habits, contradictions, creative energy, strengths, weaknesses, and reflections.",
+        ),
+    )
+    cursor.execute(
+        "INSERT INTO experiences (user_id, title, organization, description, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?)",
+        (
+            1,
+            "Project Developer",
+            "Portfolio for Weirdos",
+            "Designed a prototype portfolio system that combines professional records with structured identity attributes.",
+            "2025-12-01",
+            None,
+        ),
+    )
+    cursor.executemany(
+        "INSERT INTO skills (user_id, name, category, confidence_level) VALUES (?, ?, ?, ?)",
+        [
+            (1, "Relational database design", "Technical", 4),
+            (1, "Human-centred design", "Design", 4),
+            (1, "Prototype development", "Technical", 4),
+            (1, "Reflective writing", "Identity", 5),
+        ],
+    )
+    cursor.executemany(
+        "INSERT INTO identity_traits (user_id, trait_name, trait_type, description, visibility) VALUES (?, ?, ?, ?, ?)",
+        [
+            (1, "Creative outsider thinking", "strength", "Looks for unusual angles instead of only repeating standard portfolio formats.", "public"),
+            (1, "Overthinking useful details", "weakness", "Can spend too long polishing ideas, but it often reveals better design questions.", "public"),
+            (1, "Playful seriousness", "personality", "Takes meaningful work seriously without making the whole experience lifeless.", "public"),
+        ],
+    )
+    cursor.executemany(
+        "INSERT INTO habits (user_id, name, frequency, identity_link) VALUES (?, ?, ?, ?)",
+        [
+            (1, "Collecting odd project ideas", "Weekly", "Keeps the portfolio connected to curiosity and non-traditional learning."),
+            (1, "Writing reflection notes", "After milestones", "Turns personal development into structured evidence."),
+        ],
+    )
+    import json as _json
+
+    _sample_canvas = _json.dumps({
+        "version": "5.3.0",
+        "background": "#1b6f5c",
+        "objects": [
+            {"type": "textbox", "left": 90, "top": 320, "width": 900, "text": "Sujit is\nstill becoming.",
+             "fontFamily": "Inter", "fontSize": 96, "fontWeight": 800, "fill": "#f7f3ea"},
+            {"type": "textbox", "left": 90, "top": 640, "width": 700, "text": "Welcome to my wall — made in the Studio, not a form.",
+             "fontFamily": "Inter", "fontSize": 32, "fill": "#d7f5e9"},
+        ],
+    })
+    _sample_thumb = (
+        "data:image/svg+xml;base64,"
+        + __import__("base64").b64encode(
+            b'<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080">'
+            b'<rect width="1080" height="1080" fill="#1b6f5c"/>'
+            b'<text x="80" y="420" font-family="sans-serif" font-size="96" font-weight="800" fill="#f7f3ea">Sujit is</text>'
+            b'<text x="80" y="520" font-family="sans-serif" font-size="96" font-weight="800" fill="#f7f3ea">still becoming.</text>'
+            b'<text x="80" y="620" font-family="sans-serif" font-size="32" fill="#d7f5e9">Welcome to my wall - made in the Studio, not a form.</text>'
+            b'</svg>'
+        ).decode()
+    )
+    cursor.execute(
+        "INSERT INTO posts (user_id, title, canvas_json, thumbnail, width, height) VALUES (?, ?, ?, ?, ?, ?)",
+        (1, "Still becoming", _sample_canvas, _sample_thumb, 1080, 1080),
+    )
+    cursor.execute(
+        "INSERT INTO reflections (user_id, title, body, mood) VALUES (?, ?, ?, ?)",
+        (1, "Why this portfolio exists", "Traditional portfolios show achievement, but they often miss the person behind the achievement. This prototype stores both.", "Focused"),
+    )
+    cursor.execute(
+        "INSERT INTO usability_feedback (visitor_name, clarity_rating, identity_rating, comments) VALUES (?, ?, ?, ?)",
+        ("Sample tester", 5, 5, "The portfolio makes the identity traits visible without losing structure."),
+    )
+    connection.commit()
+    connection.close()
+    print(f"Created schema at {path} with seed login sujit@example.com / password123")
+
+
+if __name__ == "__main__":
+    init_sqlite_db()

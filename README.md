@@ -70,10 +70,11 @@ edit the `window.PFW_API_BASE` line at the top of `frontend/index.html`.
 | GET | `/api/profiles` | Directory of all public profiles |
 | GET | `/api/profiles/<id>` | One profile |
 | GET/PUT | `/api/profile/me` | Read/update your own profile |
+| POST | `/api/profile/me/avatar` | Upload a profile picture to Cloudinary (multipart `avatar` field) |
 | GET | `/api/dashboard` | Stats + recent profiles for the dashboard |
 | GET | `/api/portfolio/user/<user_id>` | Read-only portfolio evidence for anyone |
 | GET | `/api/portfolio/me` | Your own portfolio evidence (editable) |
-| POST | `/api/portfolio/<section>` | Add a record (education/experiences/skills/achievements/identity_traits/habits) |
+| POST | `/api/portfolio/<section>` | Add a record (experiences/skills/identity_traits/habits) |
 | DELETE | `/api/portfolio/<section>/<id>` | Remove your own record |
 | GET/POST | `/api/reflections` | Personal journal entries |
 | POST | `/api/feedback` | Usability testing form (Objective 4, no login required) |

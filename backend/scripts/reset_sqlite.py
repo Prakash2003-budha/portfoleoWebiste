@@ -48,14 +48,10 @@ def delete_user(email):
 
 
 def reset_database():
-    init_script = BASE_DIR / "scripts" / "init_sqlite.py"
-    if not init_script.exists():
-        raise SystemExit("init_sqlite.py not found for reset.")
-    print(f"Resetting database at {DB_PATH} using {init_script}")
-    os.chdir(BASE_DIR)
-    exit_code = os.system(f"python {init_script}")
-    if exit_code != 0:
-        raise SystemExit(f"Database reset failed with exit code {exit_code}")
+    from init_sqlite import init_sqlite_db
+
+    print(f"Resetting database at {DB_PATH}")
+    init_sqlite_db(path=str(DB_PATH))
 
 
 def main():

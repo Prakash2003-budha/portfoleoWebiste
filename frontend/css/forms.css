@@ -6,7 +6,7 @@
 .detail-panel {
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: rgba(24, 26, 32, 0.92);
+  background: rgba(36, 30, 42, 0.92);
   box-shadow: var(--shadow);
 }
 
@@ -24,13 +24,13 @@
 }
 
 .status-card.success {
-  border-color: rgba(110, 231, 183, 0.45);
-  background: linear-gradient(180deg, rgba(54, 192, 119, 0.12), rgba(24, 26, 32, 0.95));
+  border-color: rgba(227, 162, 60, 0.45);
+  background: linear-gradient(180deg, rgba(143, 179, 155, 0.12), rgba(36, 30, 42, 0.95));
 }
 
 .status-card.error {
-  border-color: rgba(253, 164, 175, 0.45);
-  background: linear-gradient(180deg, rgba(249, 115, 22, 0.12), rgba(24, 26, 32, 0.95));
+  border-color: rgba(201, 115, 97, 0.45);
+  background: linear-gradient(180deg, rgba(201, 115, 97, 0.12), rgba(36, 30, 42, 0.95));
 }
 
 .status-icon {
@@ -49,7 +49,7 @@
 }
 
 .status-card.error .status-icon {
-  color: #fca5a5;
+  color: #E2A79A;
 }
 
 .status-label {
@@ -98,7 +98,7 @@ textarea {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   outline: none;
-  background: #111318;
+  background: #19151D;
   color: var(--text);
 }
 
@@ -109,8 +109,8 @@ textarea {
 
 input:focus,
 textarea:focus {
-  border-color: rgba(110, 231, 183, 0.72);
-  box-shadow: 0 0 0 3px rgba(110, 231, 183, 0.13);
+  border-color: rgba(227, 162, 60, 0.72);
+  box-shadow: 0 0 0 3px rgba(227, 162, 60, 0.13);
 }
 
 .form-note,
@@ -122,8 +122,47 @@ textarea:focus {
 
 .alert {
   padding: 12px 14px;
-  border: 1px solid rgba(253, 164, 175, 0.28);
+  border: 1px solid rgba(201, 115, 97, 0.28);
   border-radius: var(--radius);
-  background: rgba(253, 164, 175, 0.1);
-  color: #fecdd3;
+  background: rgba(201, 115, 97, 0.1);
+  color: #EFC9C1;
+}
+
+.loading-state.small {
+  padding: 0;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.avatar-uploader {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 16px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.avatar-uploader-preview .avatar {
+  width: 76px;
+  font-size: 1.5rem;
+}
+
+.avatar-uploader-controls {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.avatar-upload-btn {
+  justify-self: start;
+  cursor: pointer;
+}
+
+.avatar-uploader-hint {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.45;
 }

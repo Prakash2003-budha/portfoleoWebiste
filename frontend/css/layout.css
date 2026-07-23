@@ -7,7 +7,7 @@
   gap: 24px;
   align-items: center;
   padding: 16px clamp(18px, 4vw, 56px);
-  background: rgba(16, 17, 20, 0.88);
+  background: rgba(27, 22, 32, 0.88);
   border-bottom: 1px solid var(--line);
   backdrop-filter: blur(18px);
 }
@@ -47,7 +47,7 @@
 }
 
 .meta-row .button {
-  color: #07110d;
+  color: var(--ink);
 }
 
 .meta-row .button.ghost {
@@ -89,9 +89,9 @@ main {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background:
-    linear-gradient(135deg, rgba(110, 231, 183, 0.12), transparent 36%),
-    linear-gradient(225deg, rgba(253, 164, 175, 0.1), transparent 38%),
-    rgba(24, 26, 32, 0.78);
+    linear-gradient(135deg, rgba(227, 162, 60, 0.12), transparent 36%),
+    linear-gradient(225deg, rgba(201, 115, 97, 0.1), transparent 38%),
+    rgba(36, 30, 42, 0.78);
   box-shadow: var(--shadow);
 }
 

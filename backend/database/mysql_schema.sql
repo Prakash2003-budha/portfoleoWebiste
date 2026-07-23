@@ -7,10 +7,8 @@ DROP TABLE IF EXISTS reflections;
 DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS habits;
 DROP TABLE IF EXISTS identity_traits;
-DROP TABLE IF EXISTS achievements;
 DROP TABLE IF EXISTS skills;
 DROP TABLE IF EXISTS experiences;
-DROP TABLE IF EXISTS education;
 DROP TABLE IF EXISTS profiles;
 DROP TABLE IF EXISTS users;
 
@@ -30,16 +28,8 @@ CREATE TABLE profiles (
   headline VARCHAR(180) NOT NULL,
   location VARCHAR(120),
   bio TEXT,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
-CREATE TABLE education (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL,
-  institution VARCHAR(160) NOT NULL,
-  qualification VARCHAR(180) NOT NULL,
-  start_year INT,
-  end_year INT,
+  avatar_url VARCHAR(500),
+  avatar_public_id VARCHAR(255),
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -60,15 +50,6 @@ CREATE TABLE skills (
   name VARCHAR(120) NOT NULL,
   category VARCHAR(80) NOT NULL,
   confidence_level TINYINT NOT NULL CHECK (confidence_level BETWEEN 1 AND 5),
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
-CREATE TABLE achievements (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL,
-  title VARCHAR(180) NOT NULL,
-  description TEXT,
-  achieved_on DATE,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -140,10 +121,6 @@ INSERT INTO users (id, full_name, email, password_hash, role) VALUES
 INSERT INTO profiles (user_id, display_name, headline, location, bio) VALUES
 (1, 'Sujit Khadgi', 'Computing student building a relational portfolio for full-person identity', 'Birmingham / Kathmandu', 'A portfolio that includes the formal evidence of skill and the more human details: habits, contradictions, creative energy, strengths, weaknesses, and reflections.');
 
-INSERT INTO education (user_id, institution, qualification, start_year, end_year) VALUES
-(1, 'Birmingham City University', 'CMP6200 Individual Honours Project', 2025, 2026),
-(1, 'School of Computing and Digital Technology', 'Undergraduate Computing pathway', 2024, 2026);
-
 INSERT INTO experiences (user_id, title, organization, description, start_date, end_date) VALUES
 (1, 'Project Developer', 'Portfolio for Weirdos', 'Designed a prototype portfolio system that combines professional records with structured identity attributes.', '2025-12-01', NULL);
 
@@ -152,9 +129,6 @@ INSERT INTO skills (user_id, name, category, confidence_level) VALUES
 (1, 'Human-centred design', 'Design', 4),
 (1, 'Prototype development', 'Technical', 4),
 (1, 'Reflective writing', 'Identity', 5);
-
-INSERT INTO achievements (user_id, title, description, achieved_on) VALUES
-(1, 'Project interim report completed', 'Defined the problem, aims, objectives, scope, methodology, risks, and ethics for Portfolio for Weirdos.', '2026-03-06');
 
 INSERT INTO identity_traits (user_id, trait_name, trait_type, description, visibility) VALUES
 (1, 'Creative outsider thinking', 'strength', 'Looks for unusual angles instead of only repeating standard portfolio formats.', 'public'),

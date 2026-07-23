@@ -23,6 +23,17 @@ def migrate_sqlite_db():
         print("Adding activation_token column to users table")
         cursor.execute("ALTER TABLE users ADD COLUMN activation_token TEXT")
 
+    cursor.execute("PRAGMA table_info(profiles);")
+    profile_columns = [row[1] for row in cursor.fetchall()]
+
+    if "avatar_url" not in profile_columns:
+        print("Adding avatar_url column to profiles table")
+        cursor.execute("ALTER TABLE profiles ADD COLUMN avatar_url TEXT")
+
+    if "avatar_public_id" not in profile_columns:
+        print("Adding avatar_public_id column to profiles table")
+        cursor.execute("ALTER TABLE profiles ADD COLUMN avatar_public_id TEXT")
+
     cursor.execute(
         """SELECT name FROM sqlite_master WHERE type='table' AND name='posts';"""
     )
@@ -44,6 +55,9 @@ def migrate_sqlite_db():
             )
             """
         )
+
+    cursor.execute("DROP TABLE IF EXISTS education")
+    cursor.execute("DROP TABLE IF EXISTS achievements")
 
     connection.commit()
     connection.close()
