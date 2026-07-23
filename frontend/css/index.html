@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portfolios for Weirdos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/forms.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/portfolio.css">
+  <link rel="stylesheet" href="css/studio.css">
+  <script>
+    // Point this at your backend if it's not running on the default port.
+    window.PFW_API_BASE = "http://127.0.0.1:5000/api";
+  </script>
+  <!-- Fabric.js powers the Canva-like Studio editor (text, shapes, images, pencil). -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#/dashboard">Portfolios for Weirdos</a>
+    <nav class="topnav" id="topnav"></nav>
+    <div class="top-actions" id="top-actions"></div>
+  </header>
+  <main id="view">
+    <p class="loading-state">Loading…</p>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/schema.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/pages/login.js"></script>
+  <script src="js/pages/register.js"></script>
+  <script src="js/pages/activate.js"></script>
+  <script src="js/pages/dashboard.js"></script>
+  <script src="js/pages/profiles.js"></script>
+  <script src="js/pages/profileDetail.js"></script>
+  <script src="js/pages/profileForm.js"></script>
+  <script src="js/pages/portfolio.js"></script>
+  <script src="js/pages/studio.js"></script>
+  <script src="js/pages/feedback.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

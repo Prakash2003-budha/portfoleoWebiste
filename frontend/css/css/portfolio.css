@@ -1,0 +1,143 @@
+/* --- Item List Styles --- */
+.item-list {
+  list-style: none;
+  margin: 0 0 24px 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.item-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: var(--panel-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+}
+
+.item-list li div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.item-list li strong {
+  display: block;
+  font-size: 1em;
+  color: var(--text);
+}
+
+.item-list li span {
+  color: var(--muted);
+  font-size: 0.9em;
+}
+
+.item-list .remove-btn {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--rose);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.item-list .remove-btn:hover {
+  background: var(--rose);
+  color: #fff;
+  border-color: var(--rose);
+}
+
+/* --- Form Styles (The Fix) --- */
+.inline-form {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 24px;
+  background: var(--panel-soft); /* Groups the form visually */
+  padding: 20px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+}
+
+.inline-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.inline-form input,
+.inline-form select,
+.inline-form textarea {
+  width: 100%; /* Forces consistent width */
+  box-sizing: border-box; /* Prevents padding from breaking width */
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.inline-form textarea {
+  resize: vertical; /* Allows users to expand textareas predictably */
+}
+
+.inline-form input:focus,
+.inline-form select:focus,
+.inline-form textarea:focus {
+  outline: none;
+  border-color: var(--accent-strong);
+}
+
+.inline-form button {
+  grid-column: 1 / -1;
+  padding: 10px;
+  margin-top: 8px;
+  background: var(--accent-strong);
+  color: var(--ink);
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.inline-form button:hover {
+  opacity: 0.9;
+}
+
+/* --- Tabs --- */
+.tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--panel-soft);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tabs button:hover {
+  background: var(--line);
+}
+
+.tabs button.active {
+  background: var(--accent-strong);
+  color: var(--ink);
+  border-color: transparent;
+}
