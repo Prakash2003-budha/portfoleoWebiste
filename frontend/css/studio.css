@@ -188,6 +188,23 @@
   margin-left: 12px;
 }
 
+.studio-field select {
+  flex: 1;
+  max-width: 160px;
+  margin-left: 12px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #19151D;
+  color: var(--text);
+  font-size: 0.85rem;
+}
+
+.studio-field select:focus {
+  border-color: rgba(227, 162, 60, 0.72);
+  outline: none;
+}
+
 .studio-field-row {
   display: flex;
   align-items: center;

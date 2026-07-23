@@ -39,6 +39,7 @@
 
 .avatar-link {
   display: inline-flex;
+  align-self: start;
   border-radius: 50%;
   transition: transform 150ms ease;
 }

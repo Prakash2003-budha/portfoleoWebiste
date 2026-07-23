@@ -111,6 +111,23 @@ async function renderStudio(params) {
             </label>
             <div id="studio-text-controls" style="display:none;">
               <label class="studio-field">
+                Font
+                <select id="studio-font-family">
+                  <option value="Inter, sans-serif">Inter</option>
+                  <option value="Fraunces, Georgia, serif">Fraunces</option>
+                  <option value="'Playfair Display', Georgia, serif">Playfair Display</option>
+                  <option value="'Bebas Neue', sans-serif">Bebas Neue</option>
+                  <option value="'IBM Plex Mono', monospace">IBM Plex Mono</option>
+                  <option value="Georgia, 'Times New Roman', serif">Georgia</option>
+                  <option value="'Times New Roman', Times, serif">Times New Roman</option>
+                  <option value="Arial, Helvetica, sans-serif">Arial</option>
+                  <option value="Verdana, Geneva, sans-serif">Verdana</option>
+                  <option value="'Courier New', Courier, monospace">Courier New</option>
+                  <option value="'Brush Script MT', cursive">Brush Script</option>
+                  <option value="Impact, 'Arial Narrow Bold', sans-serif">Impact</option>
+                </select>
+              </label>
+              <label class="studio-field">
                 Font size
                 <input type="range" id="studio-font-size" min="12" max="180" value="48">
               </label>
@@ -425,6 +442,14 @@ function bindStudioPanel() {
   });
   document.getElementById("studio-obj-fill").addEventListener("change", pushStudioHistory);
 
+  document.getElementById("studio-font-family").addEventListener("change", (e) => {
+    const active = studioCanvas.getActiveObject();
+    if (!active || active.type !== "textbox") return;
+    active.set("fontFamily", e.target.value);
+    studioCanvas.renderAll();
+    pushStudioHistory();
+  });
+
   document.getElementById("studio-font-size").addEventListener("input", (e) => {
     const active = studioCanvas.getActiveObject();
     if (!active || active.type !== "textbox") return;
@@ -494,6 +519,7 @@ function updateStudioPanel() {
   document.getElementById("studio-obj-fill").value = toHexColor(isLine ? active.stroke : active.fill);
   document.getElementById("studio-opacity").value = active.opacity != null ? active.opacity : 1;
   if (isText) {
+    document.getElementById("studio-font-family").value = active.fontFamily || "Inter, sans-serif";
     document.getElementById("studio-font-size").value = active.fontSize || 48;
     document.getElementById("studio-font-bold").checked = (active.fontWeight || 400) >= 700;
   }
