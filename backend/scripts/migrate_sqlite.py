@@ -24,7 +24,6 @@ def migrate_sqlite_db():
         cursor.execute("ALTER TABLE users ADD COLUMN activation_token TEXT")
 
     cursor.execute(
-<<<<<<< HEAD
         """SELECT name FROM sqlite_master WHERE type='table' AND name='posts';"""
     )
     if not cursor.fetchone():
@@ -45,19 +44,6 @@ def migrate_sqlite_db():
             )
             """
         )
-=======
-        """CREATE TABLE IF NOT EXISTS canvas_layouts (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              user_id INTEGER NOT NULL UNIQUE,
-              canvas_width INTEGER NOT NULL DEFAULT 1000,
-              canvas_height INTEGER NOT NULL DEFAULT 1300,
-              background_color TEXT NOT NULL DEFAULT '#ffffff',
-              elements TEXT NOT NULL DEFAULT '[]',
-              updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-              FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-           )"""
-    )
->>>>>>> 0e762e7e58b727824699158bf5f52941476c7973
 
     connection.commit()
     connection.close()
