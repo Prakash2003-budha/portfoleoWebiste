@@ -1,0 +1,447 @@
+/* --- Studio (Canva-like editor) --- */
+
+.studio {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.studio-topbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  background: var(--panel);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+}
+
+.studio-title-input {
+  flex: 1;
+  min-width: 160px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid transparent;
+  color: var(--text);
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 6px 4px;
+}
+
+.studio-title-input:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+
+.studio-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.studio-notice {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.studio-body {
+  display: grid;
+  grid-template-columns: 108px 1fr 260px;
+  gap: 16px;
+  align-items: start;
+}
+
+.studio-tools {
+  position: sticky;
+  top: 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 8px;
+  background: var(--panel);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+}
+
+.studio-tools-divider {
+  height: 1px;
+  margin: 6px 4px;
+  background: var(--line-soft);
+}
+
+.studio-tool {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 4px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.74rem;
+  font-weight: 600;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.studio-tool:hover {
+  background: var(--panel-soft);
+  color: var(--text);
+}
+
+.studio-tool.active {
+  background: var(--accent-soft);
+  border-color: rgba(0, 102, 204, 0.28);
+  color: var(--accent-strong);
+}
+
+.studio-tool-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.studio-canvas-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.studio-canvas-frame {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: var(--panel-soft);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+}
+
+.studio-canvas-frame canvas {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+}
+
+.studio-hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.studio-panel {
+  position: sticky;
+  top: 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  background: var(--panel);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+}
+
+.studio-panel h3 {
+  margin: 0;
+  font-size: 0.76rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.studio-panel-empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.studio-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.studio-field input[type="color"] {
+  width: 44px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: none;
+  cursor: pointer;
+}
+
+.studio-field input[type="range"] {
+  flex: 1;
+  margin-left: 12px;
+}
+
+.studio-field select {
+  flex: 1;
+  max-width: 160px;
+  margin-left: 12px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #FFFFFF;
+  color: var(--text);
+  font-size: 0.85rem;
+}
+
+.studio-field select:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.studio-field-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+
+.studio-layer-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.studio-layer-row .button {
+  flex: 1;
+}
+
+@media (max-width: 980px) {
+  .studio-body {
+    grid-template-columns: 1fr;
+  }
+
+  .studio-tools {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .studio-tool {
+    flex-direction: row;
+    padding: 8px 12px;
+  }
+
+  .studio-panel {
+    position: static;
+  }
+}
+
+/* --- Wall (visual posts grid) --- */
+
+.wall-section {
+  margin-top: 8px;
+}
+
+.wall-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.wall-tile {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line-soft);
+  background: var(--panel-soft);
+  cursor: pointer;
+}
+
+.wall-tile:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.wall-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 200ms ease;
+}
+
+.wall-tile:hover img {
+  transform: scale(1.04);
+}
+
+/* Overlay sits on top of a photo, so it stays dark/light-text
+   regardless of the site's own light theme — this is about legibility
+   against arbitrary image content, not the page palette. */
+.wall-tile-overlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.72), transparent);
+  color: #FFFFFF;
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.wall-tile:hover .wall-tile-overlay {
+  opacity: 1;
+}
+
+.wall-tile-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.wall-tile-edit,
+.wall-tile-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: var(--pill);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.45);
+  color: #FFFFFF;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.wall-tile-edit:hover {
+  border-color: #FFFFFF;
+  background: var(--accent);
+}
+
+.wall-tile-delete:hover {
+  border-color: #FFFFFF;
+  background: var(--danger);
+}
+
+.wall-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 40px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+  color: var(--muted);
+}
+
+.nav-cta {
+  padding: 6px 14px;
+  border-radius: var(--pill);
+  background: var(--accent-soft);
+  border: 1px solid rgba(0, 102, 204, 0.24);
+  color: var(--accent-strong) !important;
+  font-weight: 600;
+}
+
+/* --- Lightbox (click a wall tile to view the full post) --- */
+/* A dark viewer backdrop is standard for image lightboxes (e.g. Photos
+   apps) and stays that way independent of the site's light theme. */
+
+body.lightbox-open {
+  overflow: hidden;
+}
+
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(6px);
+  animation: lightbox-fade-in 150ms ease;
+}
+
+@keyframes lightbox-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.lightbox-shell {
+  position: relative;
+  display: grid;
+  gap: 14px;
+  max-width: min(720px, 92vw);
+  max-height: 90vh;
+}
+
+.lightbox-image {
+  width: 100%;
+  max-height: 76vh;
+  object-fit: contain;
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+.lightbox-caption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  color: #FFFFFF;
+}
+
+.lightbox-caption h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.lightbox-caption span {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: -18px;
+  right: -18px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: none;
+  background: #FFFFFF;
+  color: var(--text);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+.lightbox-close:hover {
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+}
+
+@media (max-width: 640px) {
+  .lightbox-close {
+    top: -12px;
+    right: 0;
+  }
+}
