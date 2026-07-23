@@ -4,16 +4,15 @@
 .note-card,
 .stat-card,
 .detail-panel {
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: rgba(36, 30, 42, 0.92);
-  box-shadow: var(--shadow);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
 }
 
 .form-card {
   display: grid;
   gap: 18px;
-  padding: 26px;
+  padding: 28px;
 }
 
 .status-card {
@@ -24,13 +23,13 @@
 }
 
 .status-card.success {
-  border-color: rgba(227, 162, 60, 0.45);
-  background: linear-gradient(180deg, rgba(143, 179, 155, 0.12), rgba(36, 30, 42, 0.95));
+  border-color: var(--success-soft);
+  background: var(--success-soft);
 }
 
 .status-card.error {
-  border-color: rgba(201, 115, 97, 0.45);
-  background: linear-gradient(180deg, rgba(201, 115, 97, 0.12), rgba(36, 30, 42, 0.95));
+  border-color: var(--danger-soft);
+  background: var(--danger-soft);
 }
 
 .status-icon {
@@ -41,24 +40,24 @@
   place-items: center;
   font-size: 2rem;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.7);
 }
 
 .status-card.success .status-icon {
-  color: var(--accent);
+  color: var(--success);
 }
 
 .status-card.error .status-icon {
-  color: #E2A79A;
+  color: var(--danger);
 }
 
 .status-label {
   margin: 0;
   color: var(--text);
-  font-size: 1rem;
-  font-weight: 900;
+  font-size: 0.95rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.1em;
 }
 
 .status-details p {
@@ -86,20 +85,24 @@
 label {
   display: grid;
   gap: 8px;
-  color: var(--muted);
-  font-weight: 800;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.92rem;
 }
 
 input,
-textarea {
+textarea,
+select {
   width: 100%;
-  min-height: 48px;
+  min-height: 46px;
   padding: 12px 14px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   outline: none;
-  background: #19151D;
+  background: #FFFFFF;
   color: var(--text);
+  font-size: 0.96rem;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
 textarea {
@@ -108,9 +111,10 @@ textarea {
 }
 
 input:focus,
-textarea:focus {
-  border-color: rgba(227, 162, 60, 0.72);
-  box-shadow: 0 0 0 3px rgba(227, 162, 60, 0.13);
+textarea:focus,
+select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
 }
 
 .form-note,
@@ -122,10 +126,11 @@ textarea:focus {
 
 .alert {
   padding: 12px 14px;
-  border: 1px solid rgba(201, 115, 97, 0.28);
+  border: 1px solid var(--danger-soft);
   border-radius: var(--radius);
-  background: rgba(201, 115, 97, 0.1);
-  color: #EFC9C1;
+  background: var(--danger-soft);
+  color: #8E0010;
+  font-weight: 500;
 }
 
 .loading-state.small {
@@ -139,9 +144,9 @@ textarea:focus {
   align-items: center;
   gap: 18px;
   padding: 16px;
-  border: 1px dashed var(--line);
+  border: 1px solid var(--line-soft);
   border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--panel-soft);
 }
 
 .avatar-uploader-preview .avatar {
@@ -163,6 +168,6 @@ textarea:focus {
 .avatar-uploader-hint {
   color: var(--muted);
   font-size: 0.82rem;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.45;
 }

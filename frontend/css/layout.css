@@ -6,15 +6,17 @@
   grid-template-columns: auto 1fr auto;
   gap: 24px;
   align-items: center;
-  padding: 16px clamp(18px, 4vw, 56px);
-  background: rgba(27, 22, 32, 0.88);
-  border-bottom: 1px solid var(--line);
-  backdrop-filter: blur(18px);
+  padding: 14px clamp(18px, 4vw, 56px);
+  background: rgba(255, 255, 255, 0.82);
+  border-bottom: 1px solid var(--line-soft);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 
 .brand {
-  font-weight: 900;
-  letter-spacing: 0.02em;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
 }
 
 .topnav,
@@ -37,17 +39,18 @@
 .meta-row a,
 .form-note a {
   color: var(--muted);
-  font-weight: 700;
+  font-weight: 500;
+  font-size: 0.94rem;
 }
 
-.topnav a,
-.meta-row a,
+.topnav a:hover,
+.meta-row a:hover,
 .form-note a:hover {
-  color: var(--accent);
+  color: var(--text);
 }
 
 .meta-row .button {
-  color: var(--ink);
+  color: #FFFFFF;
 }
 
 .meta-row .button.ghost {
@@ -56,7 +59,7 @@
 
 .user-label {
   color: var(--muted);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
 }
 
 main {
@@ -85,14 +88,10 @@ main {
 .directory-hero,
 .dashboard-hero,
 .profile-banner {
-  padding: clamp(26px, 5vw, 56px);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background:
-    linear-gradient(135deg, rgba(227, 162, 60, 0.12), transparent 36%),
-    linear-gradient(225deg, rgba(201, 115, 97, 0.1), transparent 38%),
-    rgba(36, 30, 42, 0.78);
-  box-shadow: var(--shadow);
+  padding: clamp(26px, 5vw, 52px);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
 }
 
 .profile-page {
@@ -132,7 +131,7 @@ main {
 
   .topbar {
     gap: 14px;
-    padding: 14px;
+    padding: 12px 14px;
   }
 
   .top-actions,
@@ -150,6 +149,6 @@ main {
   }
 
   h1 {
-    font-size: 2.7rem;
+    font-size: 2.4rem;
   }
 }
