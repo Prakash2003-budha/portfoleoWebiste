@@ -1,7 +1,6 @@
 :root {
   color-scheme: light;
 
-  /* Surfaces — from the Apple Palette (black/grays/blue) */
   --bg: #EEEEEE;
   --panel: #FFFFFF;
   --panel-soft: #E4E4E4;
@@ -13,13 +12,11 @@
   --line: #979797;
   --line-soft: #D6D6D6;
 
-  /* Primary accent — the blue swatch from the palette */
   --accent: #0088CC;
   --accent-strong: #00669C;
   --accent-soft: #E3F2FA;
 
-  /* Secondary accents (functional/status colors — kept distinct from the
-     neutral+blue palette above so alerts and badges stay legible) */
+
   --violet: #4DA6D9;
   --violet-soft: #E3F2FA;
   --teal: #339FCB;
