@@ -33,6 +33,7 @@ async function resolve() {
     teardownStudio();
   }
   const path = currentPath();
+  if (typeof highlightActiveNav === "function") highlightActiveNav();
   for (const r of routes) {
     const match = path.match(r.regex);
     if (match) {

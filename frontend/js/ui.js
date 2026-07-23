@@ -73,11 +73,12 @@ async function renderTopbar() {
 
   if (user) {
     nav.innerHTML = `
-      <a href="#/dashboard">Dashboard</a>
-      <a href="#/profile/edit">Edit My Profile</a>
-      <a href="#/profiles">View All Profiles</a>
-      <a href="#/portfolio">Portfolio</a>
-      <a href="#/feedback">Feedback</a>`;
+      <a href="#/dashboard" data-path="/dashboard">Dashboard</a>
+      <a href="#/profile/edit" data-path="/profile/edit">Edit My Profile</a>
+      <a href="#/profiles" data-path="/profiles">View All Profiles</a>
+      <a href="#/portfolio" data-path="/portfolio">Portfolio</a>
+      <a href="#/feedback" data-path="/feedback">Feedback</a>`;
+    highlightActiveNav();
     // Sign out is no longer a top-bar button. It lives in a dropdown behind
     // the user's avatar so the header stays quiet.
     actions.innerHTML = `
@@ -130,14 +131,37 @@ async function renderTopbar() {
     });
   } else {
     nav.innerHTML = `
-      <a href="#/register">Register New User</a>
-      <a href="#/login">Login</a>
-      <a href="#/profiles">View Profiles</a>`;
+      <a href="#/register" data-path="/register">Register New User</a>
+      <a href="#/login" data-path="/login">Login</a>
+      <a href="#/profiles" data-path="/profiles">View Profiles</a>`;
+    highlightActiveNav();
     actions.innerHTML = `
       <a class="button ghost small" href="#/login">Sign in</a>
       <a class="button small" href="#/register">Register New User</a>`;
   }
   return user;
+}
+
+/**
+ * Marks whichever topnav link matches the current route with the
+ * "active" class. Handles routes that aren't an exact string match to a
+ * nav link (viewing a specific profile still counts as "View All
+ * Profiles", viewing someone else's portfolio still counts as
+ * "Portfolio", etc).
+ */
+function highlightActiveNav() {
+  const nav = document.getElementById("topnav");
+  if (!nav) return;
+  const path = currentPath();
+
+  let activePath = path;
+  if (/^\/profile\/\d+$/.test(path)) activePath = "/profiles";
+  else if (/^\/portfolio(\/\d+)?$/.test(path)) activePath = "/portfolio";
+  else if (/^\/studio(\/\d+)?$/.test(path)) activePath = "/portfolio";
+
+  nav.querySelectorAll("a[data-path]").forEach((link) => {
+    link.classList.toggle("active", link.dataset.path === activePath);
+  });
 }
 
 function setView(html) {

@@ -51,6 +51,12 @@
   border-bottom-color: var(--accent);
 }
 
+.topnav a.active {
+  color: var(--text);
+  font-weight: 600;
+  border-bottom-color: var(--accent);
+}
+
 .meta-row .button { color: #FFFFFF; }
 .meta-row .button.ghost { color: var(--text); }
 
