@@ -9,7 +9,6 @@ REST API:
 backend/    Python + Flask API server (no HTML at all)
 frontend/   Static HTML/CSS/JS single-page app (no server-side code)
 ```
-
 They can be run on different machines, different ports, or deployed
 separately. During development they just need to know each other's URL.
 
@@ -19,7 +18,7 @@ separately. During development they just need to know each other's URL.
 cd backend
 python3 -m pip install -r requirements.txt --break-system-packages   # if needed
 python3 scripts/init_sqlite.py      # creates backend/portfolio_weirdos.db with seed data
-python3 app.py
+python app.py
 ```
 
 The API now runs at `http://127.0.0.1:5000`. Health check:

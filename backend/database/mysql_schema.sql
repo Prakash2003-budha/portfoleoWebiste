@@ -17,6 +17,8 @@ CREATE TABLE users (
   full_name VARCHAR(120) NOT NULL,
   email VARCHAR(160) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
+  activated TINYINT(1) NOT NULL DEFAULT 0,
+  activation_token VARCHAR(255),
   role VARCHAR(40) NOT NULL DEFAULT 'student',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -115,8 +117,8 @@ CREATE TABLE canvas_layouts (
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-INSERT INTO users (id, full_name, email, password_hash, role) VALUES
-(1, 'Sujit Khadgi', 'sujit@example.com', 'pbkdf2_sha256$706f7274666f6c696f5f666f725f77656972646f735f73656564$4db137a9bb3348fbb99b899a5f04bba2ef379757c8c817076d903ff45dd2c6a8', 'student');
+INSERT INTO users (id, full_name, email, password_hash, activated, role) VALUES
+(1, 'Sujit Khadgi', 'sujit@example.com', 'pbkdf2_sha256$706f7274666f6c696f5f666f725f77656972646f735f73656564$4db137a9bb3348fbb99b899a5f04bba2ef379757c8c817076d903ff45dd2c6a8', 1, 'student');
 
 INSERT INTO profiles (user_id, display_name, headline, location, bio) VALUES
 (1, 'Sujit Khadgi', 'Computing student building a relational portfolio for full-person identity', 'Birmingham / Kathmandu', 'A portfolio that includes the formal evidence of skill and the more human details: habits, contradictions, creative energy, strengths, weaknesses, and reflections.');

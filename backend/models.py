@@ -88,9 +88,11 @@ class UserModel:
 class ProfileModel:
     @classmethod
     def list_public(cls):
+        """Public directory — only show profiles whose account is activated."""
         rows = db.fetchall(
             """SELECT profiles.*, users.full_name
                FROM profiles JOIN users ON users.id = profiles.user_id
+               WHERE users.activated = 1
                ORDER BY profiles.id DESC"""
         )
         return rows
@@ -100,7 +102,7 @@ class ProfileModel:
         return db.fetchone(
             """SELECT profiles.*, users.full_name, users.email
                FROM profiles JOIN users ON users.id = profiles.user_id
-               WHERE profiles.id = ?""",
+               WHERE profiles.id = ? AND users.activated = 1""",
             (profile_id,),
         )
 
@@ -147,13 +149,18 @@ class ProfileModel:
 
     @classmethod
     def count_all(cls):
-        return db.fetchone("SELECT COUNT(*) AS total FROM profiles")["total"]
+        return db.fetchone(
+            """SELECT COUNT(*) AS total
+               FROM profiles JOIN users ON users.id = profiles.user_id
+               WHERE users.activated = 1"""
+        )["total"]
 
     @classmethod
     def list_recent(cls, limit=6):
         return db.fetchall(
             """SELECT profiles.*, users.full_name
                FROM profiles JOIN users ON users.id = profiles.user_id
+               WHERE users.activated = 1
                ORDER BY profiles.id DESC LIMIT ?""",
             (limit,),
         )
@@ -214,7 +221,8 @@ class PortfolioModel:
     def owner_profile(cls, user_id):
         return db.fetchone(
             """SELECT profiles.*, users.full_name FROM profiles
-               JOIN users ON users.id = profiles.user_id WHERE profiles.user_id = ?""",
+               JOIN users ON users.id = profiles.user_id
+               WHERE profiles.user_id = ? AND users.activated = 1""",
             (user_id,),
         )
 
@@ -231,6 +239,7 @@ class PostModel:
                FROM posts
                JOIN users ON users.id = posts.user_id
                LEFT JOIN profiles ON profiles.user_id = posts.user_id
+               WHERE users.activated = 1
                ORDER BY posts.id DESC LIMIT ?""",
             (limit,),
         )
@@ -242,7 +251,7 @@ class PostModel:
                FROM posts
                JOIN users ON users.id = posts.user_id
                LEFT JOIN profiles ON profiles.user_id = posts.user_id
-               WHERE posts.user_id = ?
+               WHERE posts.user_id = ? AND users.activated = 1
                ORDER BY posts.id DESC""",
             (user_id,),
         )
@@ -254,7 +263,7 @@ class PostModel:
                FROM posts
                JOIN users ON users.id = posts.user_id
                LEFT JOIN profiles ON profiles.user_id = posts.user_id
-               WHERE posts.id = ?""",
+               WHERE posts.id = ? AND users.activated = 1""",
             (post_id,),
         )
 
