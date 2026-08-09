@@ -37,6 +37,22 @@ async function renderProfileForm(error) {
         <label>Headline<input name="headline" value="${esc(profile.headline || "")}" maxlength="180" required></label>
         <label>Location<input name="location" value="${esc(profile.location || "")}"></label>
         <label>Bio<textarea name="bio" rows="7">${esc(profile.bio || "")}</textarea></label>
+
+        <div class="privacy-block">
+          <h2>Who can see this account?</h2>
+          <p class="form-note">Public means anyone can find your profile, portfolio, and posts. Private means only you can see them — everyone else will be told the account doesn't exist.</p>
+          <div class="privacy-options">
+            <label class="privacy-option">
+              <input type="radio" name="is_public" value="1" ${user.is_public ? "checked" : ""}>
+              <span><strong>Public</strong> — anyone can view your profile, portfolio, and posts.</span>
+            </label>
+            <label class="privacy-option">
+              <input type="radio" name="is_public" value="0" ${user.is_public ? "" : "checked"}>
+              <span><strong>Private</strong> — only you can see your profile, portfolio, and posts.</span>
+            </label>
+          </div>
+        </div>
+
         <button class="button" type="submit">Save profile</button>
       </form>
     </section>`);
@@ -82,6 +98,7 @@ async function renderProfileForm(error) {
         headline: form.get("headline"),
         location: form.get("location"),
         bio: form.get("bio"),
+        is_public: form.get("is_public") === "1",
       });
       navigate(`/profile/${result.id}`);
     } catch (err) {

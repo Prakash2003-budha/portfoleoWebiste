@@ -139,6 +139,35 @@
 .detail-panel p,
 .profile-summary h2 { margin-bottom: 6px; }
 
+.profile-summary-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.profile-summary-head h2 {
+  margin-bottom: 0;
+  min-width: 0;
+}
+
+.badge-private {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.privacy-hint {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.privacy-hint a {
+  color: var(--accent-strong);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .note-card p,
 .profile-card p,
 .profile-summary p,

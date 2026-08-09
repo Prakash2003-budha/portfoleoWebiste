@@ -35,7 +35,7 @@ def current_user():
     if not user_id:
         return None
     return db.fetchone(
-        "SELECT id, email, full_name, role FROM users WHERE id = ?", (user_id,)
+        "SELECT id, email, full_name, role, is_public FROM users WHERE id = ?", (user_id,)
     )
 
 

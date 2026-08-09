@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 
-from auth import login_required
+from auth import current_user, login_required
 from models import PortfolioModel
 
 bp = Blueprint("portfolio", __name__, url_prefix="/api/portfolio")
@@ -22,6 +22,12 @@ def get_portfolio_schema():
 def portfolio_for_user(user_id):
     owner = PortfolioModel.owner_profile(user_id)
     if not owner:
+        return jsonify({"error": "No portfolio for that user."}), 404
+    viewer = current_user()
+    is_owner = bool(viewer) and viewer["id"] == user_id
+    # Private accounts are only visible to their owner; everyone else gets
+    # the same "not found" as an unactivated account so nothing leaks.
+    if not is_owner and not owner.get("is_public"):
         return jsonify({"error": "No portfolio for that user."}), 404
     return jsonify({"owner": owner, "sections": _all_sections_for(user_id)})
 

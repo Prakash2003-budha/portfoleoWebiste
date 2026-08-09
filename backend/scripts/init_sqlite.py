@@ -22,6 +22,7 @@ CREATE TABLE users (
   password_hash TEXT NOT NULL,
   activated INTEGER NOT NULL DEFAULT 0,
   activation_token TEXT,
+  is_public INTEGER NOT NULL DEFAULT 1,
   role TEXT NOT NULL DEFAULT 'student',
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );

@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 
 import cloudinary_service
 from auth import current_user, login_required
-from models import ProfileModel, ReflectionModel
+from models import ProfileModel, ReflectionModel, UserModel
 
 bp = Blueprint("profiles", __name__, url_prefix="/api")
 
@@ -26,6 +26,10 @@ def get_profile(profile_id):
         return jsonify({"error": "Profile not found."}), 404
     user = current_user()
     row["is_owner"] = bool(user) and row["user_id"] == user["id"]
+    # Private accounts are only visible to their owner; everyone else gets
+    # the same "not found" as an unactivated account so nothing leaks.
+    if not row["is_owner"] and not row.get("is_public"):
+        return jsonify({"error": "Profile not found."}), 404
     return jsonify(row)
 
 
@@ -49,6 +53,15 @@ def save_profile(user):
         return jsonify({"error": "Display name and headline are required."}), 400
 
     profile_id = ProfileModel.upsert_for_user(user["id"], display_name, headline, location, bio)
+
+    # Account privacy lives on the user, not the profile, but the profile
+    # form is the natural place to change it, so accept it here too.
+    if "is_public" in data:
+        is_public = data.get("is_public")
+        if isinstance(is_public, str):
+            is_public = is_public.strip().lower() in ("1", "true", "yes", "on")
+        UserModel.set_public(user["id"], bool(is_public))
+
     return jsonify({"id": profile_id})
 
 

@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 
 from auth import current_user, login_required
-from models import PostModel
+from models import PostModel, UserModel
 
 bp = Blueprint("posts", __name__, url_prefix="/api/posts")
 
@@ -36,6 +36,11 @@ def list_public_posts():
 @bp.get("/user/<int:user_id>")
 def list_user_posts(user_id):
     viewer = current_user()
+    is_owner = bool(viewer) and viewer["id"] == user_id
+    if not is_owner:
+        account = UserModel.visibility(user_id)
+        if not account or not account.get("activated") or not account.get("is_public"):
+            return jsonify([])
     rows = PostModel.list_for_user(user_id)
     return jsonify([_serialize(row, viewer) for row in rows])
 
@@ -47,6 +52,9 @@ def get_post(post_id):
         return jsonify({"error": "Post not found."}), 404
     viewer = current_user()
     data = _serialize(row, viewer)
+    # Private accounts' posts are only visible to their owner.
+    if not data["is_owner"] and not row.get("is_public"):
+        return jsonify({"error": "Post not found."}), 404
     # Only ship the editable canvas JSON to the owner (viewers just need
     # the thumbnail); keeps the read-only feed payload small.
     if data["is_owner"]:
