@@ -18,16 +18,13 @@ SESSION_COOKIE = "pfw_session"
 # session_token -> user_id
 sessions = {}
 
-
 def create_session(user_id):
     token = new_session_token()
     sessions[token] = user_id
     return token
 
-
 def destroy_session(token):
     sessions.pop(token, None)
-
 
 def current_user():
     token = request.cookies.get(SESSION_COOKIE)
@@ -39,13 +36,11 @@ def current_user():
         (user_id,),
     )
 
-
 def login_required(view_func):
     """Decorator for routes that need an authenticated user.
 
     Injects the current user as the first positional argument.
     """
-
     @wraps(view_func)
     def wrapped(*args, **kwargs):
         user = current_user()

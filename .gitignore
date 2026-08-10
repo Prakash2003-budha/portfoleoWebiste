@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
+.pytest_cache/
+.coverage
+htmlcov/
 
 # Virtual environments
 .venv/
@@ -12,6 +15,10 @@ venv/
 # Local environment files
 .env
 *.env
+
+# Editors
+.vscode/
+.idea/
 
 # Database files
 *.db
