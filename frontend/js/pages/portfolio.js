@@ -76,7 +76,6 @@ async function renderPortfolio(params) {
       activeSection = btn.dataset.section;
       renderSectionBody(sections, editable);
       
-      // Update active tab styling
       document.querySelectorAll(".tabs button").forEach((b) => {
         b.classList.toggle("active", b === btn);
       });
@@ -188,7 +187,7 @@ function renderSectionBody(sections, editable) {
       
       try {
         await api.post(`/portfolio/${activeSection}`, payload);
-        renderPortfolio({}); // Re-render to fetch and show new data
+        renderPortfolio({});
       } catch (err) {
         alert(err.message);
       }

@@ -81,7 +81,7 @@ def upload_avatar(user):
     if file.mimetype not in ALLOWED_AVATAR_TYPES:
         return jsonify({"error": "Please upload a PNG, JPG, WEBP, or GIF image."}), 400
 
-    file.seek(0, 2)  # seek to end to measure size
+    file.seek(0, 2)
     size = file.tell()
     file.seek(0)
     if size > MAX_AVATAR_BYTES:

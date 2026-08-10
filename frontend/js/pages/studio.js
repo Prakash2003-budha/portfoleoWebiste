@@ -1,4 +1,3 @@
-// studio.js
 // The "Canva-like" post editor. People express themselves visually here —
 // text, shapes, images, and freehand drawing on a fixed-size canvas — instead
 // of filling out education/experience forms. Built on Fabric.js (loaded from

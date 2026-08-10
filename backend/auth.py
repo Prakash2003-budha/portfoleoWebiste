@@ -15,7 +15,6 @@ from security import new_session_token
 
 SESSION_COOKIE = "pfw_session"
 
-# session_token -> user_id
 sessions = {}
 
 def create_session(user_id):

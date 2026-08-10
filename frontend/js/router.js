@@ -1,4 +1,3 @@
-// router.js
 // Tiny hash router: no build step, no framework. Routes are registered as
 // exact strings or with a ":param" segment, e.g. "/profile/:id".
 

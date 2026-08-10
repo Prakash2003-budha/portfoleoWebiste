@@ -1,5 +1,3 @@
-// app.js — registers routes, then boots the app.
-
 route("/login", renderLogin);
 route("/register", renderRegister);
 route("/activate", renderActivate);

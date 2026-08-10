@@ -1,4 +1,3 @@
-// ui.js
 // Small render helpers shared across pages. Kept framework-free on purpose
 // so the whole frontend stays a plain HTML/CSS/JS deliverable.
 

@@ -1,4 +1,3 @@
-// api.js
 // Every call to the backend goes through here. `credentials: "include"`
 // is what makes the session cookie work across the frontend's own origin
 // (e.g. http://127.0.0.1:5500) talking to the backend's origin
