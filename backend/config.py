@@ -14,13 +14,6 @@ class Config:
 
     DB_ENGINE = os.getenv("DB_ENGINE", "sqlite").lower()
     SQLITE_PATH = os.getenv("SQLITE_PATH", str(BASE_DIR / "portfolio_weirdos.db"))
-    DB_HOST = os.getenv("DB_HOST", "127.0.0.1")
-    DB_PORT = int(os.getenv("DB_PORT", "3306")) if os.getenv("DB_PORT") else 3306
-    DB_USER = os.getenv("DB_USER", "")
-    DB_PASSWORD = os.getenv("DB_PASSWORD", "")
-    DB_NAME = os.getenv("DB_NAME", "")
-
-    SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret")
 
     SMTP_PROVIDER = os.getenv("SMTP_PROVIDER", "")
     SMTP_HOST = os.getenv("SMTP_HOST", "").strip()

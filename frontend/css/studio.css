@@ -345,15 +345,6 @@
   color: var(--muted);
 }
 
-.nav-cta {
-  padding: 6px 14px;
-  border-radius: var(--pill);
-  background: var(--accent-soft);
-  border: 1px solid rgba(0, 136, 204, 0.24);
-  color: var(--accent-strong) !important;
-  font-weight: 600;
-}
-
 /* --- Lightbox (click a wall tile to view the full post) --- */
 /* A dark viewer backdrop is standard for image lightboxes (e.g. Photos
    apps) and stays that way independent of the site's light theme. */

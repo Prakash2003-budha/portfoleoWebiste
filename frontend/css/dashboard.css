@@ -232,5 +232,3 @@
   display: grid; gap: 12px; padding: 0; margin: 14px 0 0; list-style: none;
 }
 .detail-panel li { display: grid; gap: 4px; }
-
-.portfolio-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }

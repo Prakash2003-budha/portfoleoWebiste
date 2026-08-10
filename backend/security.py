@@ -35,7 +35,3 @@ def new_session_token():
 def new_activation_code(length=6):
     digits = "0123456789"
     return "".join(secrets.choice(digits) for _ in range(length))
-
-
-def new_activation_token():
-    return new_activation_code()

@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, make_response, request
 
-from auth import SESSION_COOKIE, create_session, current_user, destroy_session, login_required
+from auth import SESSION_COOKIE, create_session, current_user, destroy_session
 from mailer import send_activation_email
 from models import ProfileModel, UserModel
 from security import make_password_hash, verify_password, new_activation_code

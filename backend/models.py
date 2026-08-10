@@ -48,10 +48,6 @@ PORTFOLIO_SECTIONS = {
 
 class UserModel:
     @classmethod
-    def exists_by_email(cls, email):
-        return db.fetchone("SELECT id FROM users WHERE lower(email) = lower(?)", (email,))
-
-    @classmethod
     def find_by_email(cls, email):
         return db.fetchone("SELECT * FROM users WHERE lower(email) = lower(?)", (email,))
 
@@ -82,10 +78,6 @@ class UserModel:
             "UPDATE users SET activated = ? WHERE activation_token = ? AND activated = ?",
             (True, token, False),
         )
-
-    @classmethod
-    def find_by_activation_token(cls, token):
-        return db.fetchone("SELECT * FROM users WHERE activation_token = ?", (token,))
 
     @classmethod
     def set_public(cls, user_id, is_public):

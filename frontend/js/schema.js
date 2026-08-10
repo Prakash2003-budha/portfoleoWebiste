@@ -21,4 +21,3 @@ function getPortfolioSchema() {
 window.loadPortfolioSchema = loadPortfolioSchema;
 window.getSectionConfig = getSectionConfig;
 window.getPortfolioSchema = getPortfolioSchema;
-window.PORTFOLIO_SCHEMA = PORTFOLIO_SCHEMA;
