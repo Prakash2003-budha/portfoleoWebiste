@@ -23,7 +23,10 @@ async function request(method, path, body) {
 
   if (!response.ok) {
     const message = (data && data.error) || `Request failed (${response.status})`;
-    throw new Error(message);
+    const err = new Error(message);
+    err.status = response.status;
+    err.data = data || {};
+    throw err;
   }
   return data;
 }

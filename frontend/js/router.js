@@ -28,6 +28,19 @@ function currentPath() {
   return hash || "/dashboard";
 }
 
+/**
+ * True when the route can be viewed without being signed in. Everything else
+ * requires a session, so navigating there while logged out redirects to the
+ * login page instead of showing a dead-end "Login required" alert.
+ */
+function isPublicPath(path) {
+  if (["/login", "/register", "/activate", "/profiles", "/feedback"].includes(path)) return true;
+  if (/^\/activate(\/[A-Za-z0-9_-]+)?$/.test(path)) return true;
+  if (/^\/profile\/\d+$/.test(path)) return true;
+  if (/^\/portfolio\/\d+$/.test(path)) return true;
+  return false;
+}
+
 async function resolve() {
   if (typeof studioCanvas !== "undefined" && studioCanvas && typeof teardownStudio === "function") {
     teardownStudio();
@@ -44,7 +57,14 @@ async function resolve() {
       try {
         await r.handler(params);
       } catch (err) {
-        view.innerHTML = `<p class="alert">${err.message}</p>`;
+        // Session missing or expired while navigating to a protected route
+        // (e.g. the user left the activation page and went to the dashboard).
+        // Send them to the login page instead of leaving a broken view.
+        if (err.status === 401 && !isPublicPath(path)) {
+          navigate("/login");
+          return;
+        }
+        view.innerHTML = `<p class="alert">${esc(err.message)}</p>`;
       }
       return;
     }

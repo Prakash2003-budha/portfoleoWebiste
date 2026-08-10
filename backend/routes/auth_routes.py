@@ -87,7 +87,15 @@ def login():
     if not user or not verify_password(password, user["password_hash"]):
         return jsonify({"error": "Invalid email or password."}), 401
     if not user.get("activated"):
-        return jsonify({"error": "Account not activated. Please check your email."}), 403
+        return (
+            jsonify(
+                {
+                    "error": "Account not activated. Check your email for the one-time activation code.",
+                    "pending_activation": True,
+                }
+            ),
+            403,
+        )
 
     token = create_session(user["id"])
     resp = make_response(
