@@ -141,3 +141,65 @@
   color: var(--ink);
   border-color: transparent;
 }
+
+/* --- Profile grid and cards --- */
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.profile-card {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  align-items: center;
+  background: var(--panel); /* white */
+  border: 1px solid var(--line-soft);
+  padding: 18px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(12, 20, 30, 0.06);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  text-align: center;
+}
+
+.profile-card .avatar-link { display: block; }
+.profile-card .avatar { width: 96px; height: 96px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.2rem; border-radius: 999px; background: var(--panel-warm); color: var(--text); }
+.profile-card .avatar.has-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 999px; }
+
+.profile-card-copy { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+.profile-card .title-row { display: flex; align-items: center; gap: 8px; justify-content: center; }
+.profile-card h3 { margin: 0; font-size: 1.05rem; }
+.profile-card .headline { margin: 0; color: var(--muted); font-size: 0.95rem; }
+.profile-card p { margin: 0; color: var(--text); }
+.profile-card .bio {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+.profile-card .meta-row { display:flex; justify-content:center; align-items:center; gap:12px; margin-top:6px; }
+.profile-card .badge { background: var(--accent-soft); color: var(--accent-strong); padding: 4px 8px; border-radius: 999px; font-size: 0.8rem; }
+
+/* Limit headline to one line */
+.profile-card .headline {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 620px) {
+  .profile-grid { gap: 14px; }
+  /* Stack avatars above text on small screens for a cleaner look */
+  .profile-card { grid-template-columns: 1fr; grid-template-rows: auto 1fr; padding: 14px; text-align: left; }
+  .profile-card .avatar-link { justify-self: center; }
+  .profile-card .avatar { width: 88px; height: 88px; margin-bottom: 8px; }
+  .profile-card .profile-card-copy { align-items: center; text-align: center; }
+}
+
+.profile-card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(12,20,30,0.08); }

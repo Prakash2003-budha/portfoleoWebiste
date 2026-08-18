@@ -28,6 +28,13 @@ function renderLogin() {
         // The account exists but hasn't completed email activation, so the
         // login form can't succeed. Show only a button that takes the user
         // back to the OTP confirmation page.
+        // Remember the email so the activation page can resend for this user.
+        try {
+          const fd = new FormData(e.target);
+          localStorage.setItem("pfw_pending_activation_email", fd.get("email"));
+        } catch (e) {
+          /* ignore */
+        }
         document.getElementById("login-form").innerHTML = `
           <div class="form-card status-card">
             <div class="status-details">

@@ -49,6 +49,8 @@ function renderRegister() {
         email: form.get("email"),
         password: password,
       });
+      // Save the email so the activation page can resend if needed.
+      localStorage.setItem("pfw_pending_activation_email", form.get("email"));
       // Covers both a brand-new registration and the "already registered but
       // never activated" case, which now also returns success and resends a code.
       navigate("/activate");

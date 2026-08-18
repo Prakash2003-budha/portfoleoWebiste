@@ -60,15 +60,21 @@ class UserModel:
 
     @classmethod
     def create(cls, full_name, email, password_hash, activation_token=None):
+        if activation_token:
+            return db.execute(
+                "INSERT INTO users (full_name, email, password_hash, activated, activation_token, activation_sent_at) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)",
+                (full_name, email, password_hash, False, activation_token),
+            )
+
         return db.execute(
-            "INSERT INTO users (full_name, email, password_hash, activated, activation_token) VALUES (?, ?, ?, ?, ?)",
-            (full_name, email, password_hash, False, activation_token),
+            "INSERT INTO users (full_name, email, password_hash, activated) VALUES (?, ?, ?, ?)",
+            (full_name, email, password_hash, False),
         )
 
     @classmethod
     def resend_activation(cls, user_id, activation_token):
         return db.execute(
-            "UPDATE users SET activation_token = ? WHERE id = ? AND activated = ?",
+            "UPDATE users SET activation_token = ?, activation_sent_at = CURRENT_TIMESTAMP WHERE id = ? AND activated = ?",
             (activation_token, user_id, False),
         )
 

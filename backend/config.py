@@ -44,6 +44,8 @@ class Config:
     SMTP_USE_SSL = os.getenv("SMTP_USE_SSL", "true").lower() in ("true", "1", "yes")
     SMTP_STARTTLS = os.getenv("SMTP_STARTTLS", "false").lower() in ("true", "1", "yes")
     ACTIVATION_BASE_URL = os.getenv("ACTIVATION_BASE_URL", "http://127.0.0.1:5500").strip()
+    # How many seconds a user must wait before requesting another activation code
+    ACTIVATION_RESEND_SECONDS = int(os.getenv("ACTIVATION_RESEND_SECONDS", "60"))
 
     CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME", "").strip()
     CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY", "").strip()

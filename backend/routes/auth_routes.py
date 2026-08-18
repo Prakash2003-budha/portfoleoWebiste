@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, make_response, request
 
 from auth import SESSION_COOKIE, create_session, current_user, destroy_session
 from config import Config
+from datetime import datetime, timedelta
 from mailer import send_activation_email
 from models import ProfileModel, UserModel
 from security import make_password_hash, verify_password, new_activation_code
@@ -25,6 +26,31 @@ def register():
     if existing:
         if existing["activated"]:
             return jsonify({"error": "That email is already registered. Try logging in instead."}), 409
+        # Enforce resend cooldown
+        last_sent = existing.get("activation_sent_at") or existing.get("activation_sent_at")
+        if last_sent:
+            try:
+                last = datetime.strptime(last_sent, "%Y-%m-%d %H:%M:%S")
+            except Exception:
+                try:
+                    last = datetime.fromisoformat(last_sent)
+                except Exception:
+                    last = None
+
+            if last:
+                elapsed = datetime.utcnow() - last
+                if elapsed.total_seconds() < Config.ACTIVATION_RESEND_SECONDS:
+                    wait = int(Config.ACTIVATION_RESEND_SECONDS - elapsed.total_seconds())
+                    return (
+                        jsonify(
+                            {
+                                "error": f"Please wait {wait} seconds before requesting another activation code.",
+                                "pending_activation": True,
+                                "retry_after": wait,
+                            }
+                        ),
+                        429,
+                    )
 
         activation_code = new_activation_code()
         UserModel.resend_activation(existing["id"], activation_code)
@@ -150,3 +176,82 @@ def activate_link(token):
     if not updated:
         return jsonify({"error": "Invalid or expired activation code."}), 400
     return jsonify({"ok": True, "message": "Account activated. You can now log in."})
+
+
+@bp.post("/resend-activation")
+def resend_activation():
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or "").strip().lower()
+    if not email:
+        return jsonify({"error": "Email is required."}), 400
+
+    existing = UserModel.find_by_email(email)
+    if not existing:
+        return jsonify({"error": "No account found with that email."}), 404
+    if existing.get("activated"):
+        return jsonify({"error": "Account already activated."}), 400
+
+    # Enforce resend cooldown
+    last_sent = existing.get("activation_sent_at")
+    if last_sent:
+        try:
+            last = datetime.strptime(last_sent, "%Y-%m-%d %H:%M:%S")
+        except Exception:
+            try:
+                last = datetime.fromisoformat(last_sent)
+            except Exception:
+                last = None
+
+        if last:
+            elapsed = datetime.utcnow() - last
+            if elapsed.total_seconds() < Config.ACTIVATION_RESEND_SECONDS:
+                wait = int(Config.ACTIVATION_RESEND_SECONDS - elapsed.total_seconds())
+                return (
+                    jsonify({"error": "Too many requests", "pending_activation": True, "retry_after": wait}),
+                    429,
+                )
+
+    activation_code = new_activation_code()
+    UserModel.resend_activation(existing["id"], activation_code)
+
+    sent = send_activation_email(email, existing["full_name"], activation_code)
+    if not sent:
+        return (
+            jsonify({"error": "We couldn't resend the activation email. Check SMTP settings and try again."}),
+            500,
+        )
+
+    return jsonify({"ok": True, "pending_activation": True, "message": "Activation code sent.", "retry_after": Config.ACTIVATION_RESEND_SECONDS}), 200
+
+
+@bp.get("/activation-status")
+def activation_status():
+    email = (request.args.get("email") or "").strip().lower()
+    if not email:
+        return jsonify({"error": "Email is required."}), 400
+
+    existing = UserModel.find_by_email(email)
+    if not existing:
+        return jsonify({"error": "No account found with that email."}), 404
+
+    if existing.get("activated"):
+        return jsonify({"activated": True, "can_resend": False, "retry_after": 0}), 200
+
+    last_sent = existing.get("activation_sent_at")
+    if not last_sent:
+        return jsonify({"activated": False, "can_resend": True, "retry_after": 0}), 200
+
+    try:
+        last = datetime.strptime(last_sent, "%Y-%m-%d %H:%M:%S")
+    except Exception:
+        try:
+            last = datetime.fromisoformat(last_sent)
+        except Exception:
+            last = None
+
+    if not last:
+        return jsonify({"activated": False, "can_resend": True, "retry_after": 0}), 200
+
+    elapsed = datetime.utcnow() - last
+    remaining = int(max(0, Config.ACTIVATION_RESEND_SECONDS - elapsed.total_seconds()))
+    return jsonify({"activated": False, "can_resend": remaining == 0, "retry_after": remaining}), 200

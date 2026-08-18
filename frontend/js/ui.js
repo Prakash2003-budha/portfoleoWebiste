@@ -7,6 +7,19 @@ function esc(value) {
   return div.innerHTML;
 }
 
+// Theme helpers
+function getTheme() {
+  return localStorage.getItem("pfw_theme") || "light";
+}
+
+function applyTheme(theme) {
+  document.documentElement.classList.toggle("dark-theme", theme === "dark");
+  localStorage.setItem("pfw_theme", theme);
+}
+
+// Apply persisted theme on load
+applyTheme(getTheme());
+
 function initials(name) {
   const parts = String(name || "W")
     .split(" ")
@@ -40,7 +53,7 @@ function profileCardHtml(row) {
     <div class="profile-card-copy">
       <div class="title-row"><h3>${esc(name)}</h3>${badge}</div>
       <p class="headline">${esc(row.headline || "Still shaping a public headline.")}</p>
-      <p>${esc(row.bio || "This profile is waiting for a few honest lines.")}</p>
+      <p class="bio">${esc(row.bio || "This profile is waiting for a few honest lines.")}</p>
       <div class="meta-row">
         <span>${esc(row.location || "Somewhere strange")}</span>
         <div class="card-actions">${editLink}<a class="button small" href="#/profile/${row.id}">View Profile</a></div>
@@ -88,6 +101,7 @@ async function renderTopbar() {
         : "";
 
     actions.innerHTML = `
+      <button id="theme-toggle" class="button ghost small" aria-pressed="false" aria-label="${getTheme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}">${getTheme() === 'dark' ? '🌙' : '☀'}</button>
       ${activateCta}
 
       <div class="user-menu" id="user-menu">
@@ -137,6 +151,20 @@ async function renderTopbar() {
       navigate("/login");
       renderTopbar();
     });
+    // Theme toggle wiring
+    const themeBtn = document.getElementById("theme-toggle");
+    if (themeBtn) {
+      themeBtn.addEventListener("click", (e) => {
+        const next = getTheme() === "dark" ? "light" : "dark";
+        // animate the icon briefly
+        themeBtn.classList.add('spin');
+        setTimeout(() => themeBtn.classList.remove('spin'), 460);
+        applyTheme(next);
+        themeBtn.innerHTML = next === "dark" ? '🌙' : '☀';
+        themeBtn.setAttribute("aria-pressed", next === "dark");
+        themeBtn.setAttribute("aria-label", next === "dark" ? 'Switch to light mode' : 'Switch to dark mode');
+      });
+    }
   } else {
     nav.innerHTML = `
       <a href="#/register" data-path="/register">Register New User</a>
@@ -144,8 +172,21 @@ async function renderTopbar() {
       <a href="#/profiles" data-path="/profiles">View Profiles</a>`;
     highlightActiveNav();
     actions.innerHTML = `
+      <button id="theme-toggle" class="button ghost small" aria-pressed="false" aria-label="${getTheme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}">${getTheme() === 'dark' ? '🌙' : '☀'}</button>
       <a class="button ghost small" href="#/login">Sign in</a>
       <a class="button small" href="#/register">Register New User</a>`;
+    const themeBtnAnonymous = document.getElementById("theme-toggle");
+    if (themeBtnAnonymous) {
+      themeBtnAnonymous.addEventListener("click", (e) => {
+        const next = getTheme() === "dark" ? "light" : "dark";
+        themeBtnAnonymous.classList.add('spin');
+        setTimeout(() => themeBtnAnonymous.classList.remove('spin'), 460);
+        applyTheme(next);
+        themeBtnAnonymous.innerHTML = next === "dark" ? '🌙' : '☀';
+        themeBtnAnonymous.setAttribute("aria-pressed", next === "dark");
+        themeBtnAnonymous.setAttribute("aria-label", next === "dark" ? 'Switch to light mode' : 'Switch to dark mode');
+      });
+    }
   }
   return user;
 }
