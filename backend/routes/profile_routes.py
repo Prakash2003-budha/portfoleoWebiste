@@ -44,10 +44,10 @@ def my_profile(user):
 @login_required
 def save_profile(user):
     data = request.get_json(silent=True) or {}
-    display_name = (data.get("display_name") or "").strip()
-    headline = (data.get("headline") or "").strip()
-    location = (data.get("location") or "").strip()
-    bio = (data.get("bio") or "").strip()
+    display_name = (data.get("display_name") or "").strip()[:120]
+    headline = (data.get("headline") or "").strip()[:180]
+    location = (data.get("location") or "").strip()[:120]
+    bio = (data.get("bio") or "").strip()[:2000]
 
     if not display_name or not headline:
         return jsonify({"error": "Display name and headline are required."}), 400

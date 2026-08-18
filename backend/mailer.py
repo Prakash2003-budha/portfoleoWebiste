@@ -19,24 +19,31 @@ def send_email(subject, recipient, text_body, html_body=None):
         message.add_alternative(html_body, subtype="html")
 
     try:
+        # Use a context manager so the SMTP connection is always closed
+        # (quit) even when send_message raises — the old code leaked the
+        # connection on any error after connect/login.
         if Config.SMTP_USE_SSL:
-            server = smtplib.SMTP_SSL(Config.SMTP_HOST, Config.SMTP_PORT)
+            with smtplib.SMTP_SSL(Config.SMTP_HOST, Config.SMTP_PORT) as server:
+                _login(server)
+                server.send_message(message)
         else:
-            server = smtplib.SMTP(Config.SMTP_HOST, Config.SMTP_PORT)
-            server.ehlo()
-            if Config.SMTP_STARTTLS:
-                server.starttls()
+            with smtplib.SMTP(Config.SMTP_HOST, Config.SMTP_PORT) as server:
                 server.ehlo()
-
-        if Config.SMTP_USER and Config.SMTP_PASSWORD:
-            server.login(Config.SMTP_USER, Config.SMTP_PASSWORD)
-
-        server.send_message(message)
-        server.quit()
+                if Config.SMTP_STARTTLS:
+                    server.starttls()
+                    server.ehlo()
+                _login(server)
+                server.send_message(message)
         return True
     except Exception as exc:
         print(f"[EMAIL ERROR] {exc}")
         return False
+
+
+def _login(server):
+    """Log in to the SMTP relay only when credentials were configured."""
+    if Config.SMTP_USER and Config.SMTP_PASSWORD:
+        server.login(Config.SMTP_USER, Config.SMTP_PASSWORD)
 
 
 def send_activation_email(recipient_email, full_name, activation_code):

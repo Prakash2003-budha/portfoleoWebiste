@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, make_response, request
 
 from auth import SESSION_COOKIE, create_session, current_user, destroy_session
+from config import Config
 from mailer import send_activation_email
 from models import ProfileModel, UserModel
 from security import make_password_hash, verify_password, new_activation_code
@@ -101,7 +102,14 @@ def login():
     resp = make_response(
         jsonify({"id": user["id"], "full_name": user["full_name"], "email": user["email"]})
     )
-    resp.set_cookie(SESSION_COOKIE, token, httponly=True, samesite="Lax")
+    resp.set_cookie(
+        SESSION_COOKIE,
+        token,
+        httponly=True,
+        samesite="Lax",
+        secure=Config.COOKIE_SECURE,
+        max_age=30 * 24 * 60 * 60,  # 30 days
+    )
     return resp
 
 

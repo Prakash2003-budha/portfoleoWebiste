@@ -1,5 +1,14 @@
+import argparse
+import base64
+import json
+import os
 import sqlite3
+from pathlib import Path
 
+from dotenv import load_dotenv
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
 
 PASSWORD_HASH = "pbkdf2_sha256$706f7274666f6c696f5f666f725f77656972646f735f73656564$4db137a9bb3348fbb99b899a5f04bba2ef379757c8c817076d903ff45dd2c6a8"
 
@@ -113,9 +122,6 @@ CREATE TABLE usability_feedback (
 """
 
 
-import os
-
-
 def init_sqlite_db(path=None, seed=True):
     """(Re)create the sqlite schema at `path` (defaults to SQLITE_PATH env
     var, falling back to backend/portfolio_weirdos.db). Set seed=False to
@@ -173,7 +179,7 @@ def init_sqlite_db(path=None, seed=True):
         [
             (1, "Creative outsider thinking", "strength", "Looks for unusual angles instead of only repeating standard portfolio formats.", "public"),
             (1, "Overthinking useful details", "weakness", "Can spend too long polishing ideas, but it often reveals better design questions.", "public"),
-            (1, "Playful seriousness", "personality", "Takes meaningful work seriously without making the whole experience lifeless.", "public"),
+                (1, "Playful seriousness", "personality", "Takes meaningful work seriously without making the whole experience lifeless.", "public"),
         ],
     )
     cursor.executemany(
@@ -183,9 +189,8 @@ def init_sqlite_db(path=None, seed=True):
             (1, "Writing reflection notes", "After milestones", "Turns personal development into structured evidence."),
         ],
     )
-    import json as _json
 
-    _sample_canvas = _json.dumps({
+    _sample_canvas = json.dumps({
         "version": "5.3.0",
         "background": "#1b6f5c",
         "objects": [
@@ -197,7 +202,7 @@ def init_sqlite_db(path=None, seed=True):
     })
     _sample_thumb = (
         "data:image/svg+xml;base64,"
-        + __import__("base64").b64encode(
+        + base64.b64encode(
             b'<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080">'
             b'<rect width="1080" height="1080" fill="#1b6f5c"/>'
             b'<text x="80" y="420" font-family="sans-serif" font-size="96" font-weight="800" fill="#f7f3ea">Sujit is</text>'

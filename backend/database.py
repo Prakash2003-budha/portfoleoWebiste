@@ -10,9 +10,10 @@ prototype's Database class, just pulled into its own module.
 import os
 import sqlite3
 
-from dotenv import load_dotenv
-
-load_dotenv()
+# config.py already loaded .env from BASE_DIR, so the DB_ENGINE /
+# SQLITE_PATH env vars are available here without re-calling load_dotenv.
+# This also means importing database.py on its own (e.g. in tests) works
+# as long as config.py is imported first, which app.py does.
 
 
 class Database:
@@ -68,6 +69,10 @@ class Database:
             connection.close()
 
     def _sql(self, sql):
+        # All SQL in this codebase uses ``?`` as the parameter placeholder.
+        # When running against MySQL we swap ``?`` for ``%s``. A plain
+        # str.replace is sufficient here because no SQL string in this
+        # project embeds a literal ``?`` inside a quoted string literal.
         return sql.replace("?", self.placeholder)
 
 

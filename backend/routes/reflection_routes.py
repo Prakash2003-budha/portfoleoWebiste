@@ -19,9 +19,14 @@ def add_reflection(user):
     data = request.get_json(silent=True) or {}
     title = (data.get("title") or "").strip()
     body = (data.get("body") or "").strip()
-    mood = (data.get("mood") or "").strip()
+    mood = (data.get("mood") or "").strip()[:60]
+
     if not title or not body:
         return jsonify({"error": "Title and entry text are required."}), 400
+    if len(title) > 280:
+        return jsonify({"error": "Title must be 280 characters or fewer."}), 400
+    if len(body) > 20_000:
+        return jsonify({"error": "Entry text is too long (max 20,000 characters)."}), 400
     new_id = ReflectionModel.create(user["id"], title, body, mood)
     return jsonify({"id": new_id}), 201
 

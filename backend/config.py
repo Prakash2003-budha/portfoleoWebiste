@@ -11,6 +11,8 @@ class Config:
     APP_NAME = "Portfolios for Weirdos API"
     PORT = int(os.getenv("PORT", "5000"))
     CORS_ORIGIN = os.getenv("CORS_ORIGIN", "http://127.0.0.1:5500").strip() or "http://127.0.0.1:5500"
+    COOKIE_SECURE = os.getenv("COOKIE_SECURE", "false").lower() in ("true", "1", "yes")
+    SECRET_KEY = os.getenv("SECRET_KEY", "dev-insecure-change-me")
 
     DB_ENGINE = os.getenv("DB_ENGINE", "sqlite").lower()
     SQLITE_PATH = os.getenv("SQLITE_PATH", str(BASE_DIR / "portfolio_weirdos.db"))

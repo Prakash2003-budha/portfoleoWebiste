@@ -10,11 +10,10 @@ htmlcov/
 # Virtual environments
 .venv/
 venv/
-.env/
 
-# Local environment files
+# Local environment files (do NOT commit real .env files with credentials)
 .env
-*.env
+*.env.local
 
 # Editors
 .vscode/
