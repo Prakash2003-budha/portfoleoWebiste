@@ -1,4 +1,3 @@
-// ui.js
 // Small render helpers shared across pages. Kept framework-free on purpose
 // so the whole frontend stays a plain HTML/CSS/JS deliverable.
 
@@ -81,7 +80,16 @@ async function renderTopbar() {
     highlightActiveNav();
     // Sign out is no longer a top-bar button. It lives in a dropdown behind
     // the user's avatar so the header stays quiet.
+    // If the account hasn't completed email activation, keep a visible path
+    // back to the OTP confirmation page in the header at all times.
+    const activateCta =
+      user.activated === 0
+        ? `<a class="button small" href="#/activate">Activate account</a>`
+        : "";
+
     actions.innerHTML = `
+      ${activateCta}
+
       <div class="user-menu" id="user-menu">
         <button type="button" class="user-menu-trigger" id="user-menu-trigger" aria-haspopup="menu" aria-expanded="false">
           ${avatarHtml({
@@ -169,7 +177,7 @@ function setView(html) {
 }
 
 /**
- * Full-size image lightbox — used so anyone (not just the owner) can click
+ * Full-size image lightbox -- used so anyone (not just the owner) can click
  * a post on a Wall and see it properly instead of just the small tile.
  */
 function openLightbox(imageUrl, title, meta) {

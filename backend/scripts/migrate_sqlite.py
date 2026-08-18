@@ -23,6 +23,10 @@ def migrate_sqlite_db():
         print("Adding activation_token column to users table")
         cursor.execute("ALTER TABLE users ADD COLUMN activation_token TEXT")
 
+    if "is_public" not in columns:
+        print("Adding is_public column to users table (1 = public, 0 = private)")
+        cursor.execute("ALTER TABLE users ADD COLUMN is_public INTEGER NOT NULL DEFAULT 1")
+
     cursor.execute("PRAGMA table_info(profiles);")
     profile_columns = [row[1] for row in cursor.fetchall()]
 

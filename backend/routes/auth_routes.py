@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, make_response, request
 
-from auth import SESSION_COOKIE, create_session, current_user, destroy_session, login_required
+from auth import SESSION_COOKIE, create_session, current_user, destroy_session
+from config import Config
 from mailer import send_activation_email
 from models import ProfileModel, UserModel
 from security import make_password_hash, verify_password, new_activation_code
@@ -43,7 +44,7 @@ def register():
             {
                 "id": existing["id"],
                 "pending_activation": True,
-                "message": "That email was already registered but not activated yet. We've sent a fresh code — check your inbox.",
+                "message": "That email was already registered but not activated yet. We've sent a fresh code -- check your inbox.",
             }
         ), 200
 
@@ -87,13 +88,28 @@ def login():
     if not user or not verify_password(password, user["password_hash"]):
         return jsonify({"error": "Invalid email or password."}), 401
     if not user.get("activated"):
-        return jsonify({"error": "Account not activated. Please check your email."}), 403
+        return (
+            jsonify(
+                {
+                    "error": "Account not activated. Check your email for the one-time activation code.",
+                    "pending_activation": True,
+                }
+            ),
+            403,
+        )
 
     token = create_session(user["id"])
     resp = make_response(
         jsonify({"id": user["id"], "full_name": user["full_name"], "email": user["email"]})
     )
-    resp.set_cookie(SESSION_COOKIE, token, httponly=True, samesite="Lax")
+    resp.set_cookie(
+        SESSION_COOKIE,
+        token,
+        httponly=True,
+        samesite="Lax",
+        secure=Config.COOKIE_SECURE,
+        max_age=30 * 24 * 60 * 60,  # 30 days
+    )
     return resp
 
 

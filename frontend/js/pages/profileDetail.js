@@ -3,15 +3,19 @@ async function renderProfileDetail(params) {
   const action = row.is_owner
     ? "<a class='button' href='#/profile/edit'>Edit profile</a>"
     : "<a class='button ghost' href='#/profiles'>Back to directory</a>";
+  const privacyNote = row.is_owner && !row.is_public
+    ? "<p class='alert'>This account is <strong>private</strong> -- only you can see it. Anyone else will be told this profile doesn't exist.</p>"
+    : "";
 
   setView(`
     <section class="profile-page">
       <div class="profile-banner">
         ${avatarHtml(row, "xlarge")}
-        <span class="eyebrow">Public profile</span>
+        <span class="eyebrow">${row.is_owner && !row.is_public ? "Your private profile" : "Public profile"}</span>
         <h1>${esc(row.display_name || row.full_name)}</h1>
         <p class="lede">${esc(row.headline || "A portfolio still becoming itself.")}</p>
         <div class="hero-actions">${action}<a class="button ghost" href="#/profiles">Browse more</a></div>
+        ${privacyNote}
       </div>
       <div class="detail-grid">
         <article class="detail-panel"><span>Location</span><p>${esc(row.location || "Not shared yet")}</p></article>

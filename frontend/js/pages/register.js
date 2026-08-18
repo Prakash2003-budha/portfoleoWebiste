@@ -24,17 +24,14 @@ function renderRegister() {
     const submitBtn = e.target.querySelector("button[type=submit]");
     const alertEl = document.getElementById("register-alert");
 
-    // Clear previous alert states
     alertEl.innerHTML = "";
 
     const password = form.get("password");
     const confirmPassword = form.get("confirm_password");
 
-    // Client-side validation: Check if passwords match
     if (password !== confirmPassword) {
       alertEl.innerHTML = `<p class="alert">Passwords do not match. Please try again.</p>`;
       
-      // Clear password fields to allow user re-entry
       e.target.querySelector("input[name=password]").value = "";
       e.target.querySelector("input[name=confirm_password]").value = "";
       e.target.querySelector("input[name=password]").focus();

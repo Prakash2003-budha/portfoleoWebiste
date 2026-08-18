@@ -1,7 +1,7 @@
 """
 app.py
 ------
-Backend entrypoint. This is now a pure JSON API (no HTML rendering) —
+Backend entrypoint. This is now a pure JSON API (no HTML rendering) --
 the frontend is a separate static app in ../frontend that talks to
 these endpoints over fetch(). Run with:
     python3 app.py
@@ -23,6 +23,8 @@ APP_NAME = Config.APP_NAME
 def create_app():
     app = Flask(__name__)
     app.url_map.strict_slashes = False
+    app.config["SECRET_KEY"] = Config.SECRET_KEY
+    app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024  # 10MB cap on request bodies
 
     cors_origin = Config.CORS_ORIGIN
 

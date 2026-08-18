@@ -63,10 +63,3 @@ def upload_avatar(file_storage, user_id):
         ],
     )
     return result.get("secure_url"), result.get("public_id")
-
-
-def delete_avatar(public_id):
-    if not public_id:
-        return
-    _ensure_configured()
-    cloudinary.uploader.destroy(public_id, resource_type="image")

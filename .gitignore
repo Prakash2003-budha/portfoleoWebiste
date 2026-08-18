@@ -3,15 +3,21 @@ __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
+.pytest_cache/
+.coverage
+htmlcov/
 
 # Virtual environments
 .venv/
 venv/
-.env/
 
-# Local environment files
+# Local environment files (do NOT commit real .env files with credentials)
 .env
-*.env
+*.env.local
+
+# Editors
+.vscode/
+.idea/
 
 # Database files
 *.db

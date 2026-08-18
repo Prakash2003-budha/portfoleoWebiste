@@ -1,4 +1,3 @@
-// schema.js
 // Loads metadata from the backend so the frontend can render the portfolio
 // sections dynamically instead of relying on a hardcoded local schema.
 
@@ -22,4 +21,3 @@ function getPortfolioSchema() {
 window.loadPortfolioSchema = loadPortfolioSchema;
 window.getSectionConfig = getSectionConfig;
 window.getPortfolioSchema = getPortfolioSchema;
-window.PORTFOLIO_SCHEMA = PORTFOLIO_SCHEMA;

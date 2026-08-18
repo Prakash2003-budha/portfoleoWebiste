@@ -9,7 +9,6 @@ REST API:
 backend/    Python + Flask API server (no HTML at all)
 frontend/   Static HTML/CSS/JS single-page app (no server-side code)
 ```
-
 They can be run on different machines, different ports, or deployed
 separately. During development they just need to know each other's URL.
 
@@ -19,7 +18,7 @@ separately. During development they just need to know each other's URL.
 cd backend
 python3 -m pip install -r requirements.txt --break-system-packages   # if needed
 python3 scripts/init_sqlite.py      # creates backend/portfolio_weirdos.db with seed data
-python3 app.py
+python app.py
 ```
 
 The API now runs at `http://127.0.0.1:5000`. Health check:
@@ -69,7 +68,7 @@ edit the `window.PFW_API_BASE` line at the top of `frontend/index.html`.
 | GET | `/api/me` | Current user |
 | GET | `/api/profiles` | Directory of all public profiles |
 | GET | `/api/profiles/<id>` | One profile |
-| GET/PUT | `/api/profile/me` | Read/update your own profile |
+| GET/PUT | `/api/profile/me` | Read/update your own profile (`is_public` toggles the account public/private) |
 | POST | `/api/profile/me/avatar` | Upload a profile picture to Cloudinary (multipart `avatar` field) |
 | GET | `/api/dashboard` | Stats + recent profiles for the dashboard |
 | GET | `/api/portfolio/user/<user_id>` | Read-only portfolio evidence for anyone |
@@ -78,6 +77,22 @@ edit the `window.PFW_API_BASE` line at the top of `frontend/index.html`.
 | DELETE | `/api/portfolio/<section>/<id>` | Remove your own record |
 | GET/POST | `/api/reflections` | Personal journal entries |
 | POST | `/api/feedback` | Usability testing form (Objective 4, no login required) |
+
+## Account privacy (public / private)
+
+Every account has an `is_public` flag on the `users` table (default `1`):
+
+- **Public** — activated accounts appear in the profile directory, and their
+  profile, portfolio, and posts are visible to everyone.
+- **Private** — the account disappears from the directory, and its profile,
+  portfolio, and posts return the same "not found" / empty responses as an
+  unactivated account to everyone **except the owner**. The owner can always
+  see and edit their own content.
+
+The toggle lives in **Edit my profile** (Public/Private radios). It is stored
+on the user row, so it applies to the whole account rather than just the
+profile card. `migrate_sqlite.py` and `mysql_schema.sql` both carry the new
+`is_public` column.
 
 ## Why this structure for the dissertation
 

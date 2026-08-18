@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 
 import cloudinary_service
 from auth import current_user, login_required
-from models import ProfileModel, ReflectionModel
+from models import ProfileModel, ReflectionModel, UserModel
 
 bp = Blueprint("profiles", __name__, url_prefix="/api")
 
@@ -26,6 +26,10 @@ def get_profile(profile_id):
         return jsonify({"error": "Profile not found."}), 404
     user = current_user()
     row["is_owner"] = bool(user) and row["user_id"] == user["id"]
+    # Private accounts are only visible to their owner; everyone else gets
+    # the same "not found" as an unactivated account so nothing leaks.
+    if not row["is_owner"] and not row.get("is_public"):
+        return jsonify({"error": "Profile not found."}), 404
     return jsonify(row)
 
 
@@ -40,15 +44,24 @@ def my_profile(user):
 @login_required
 def save_profile(user):
     data = request.get_json(silent=True) or {}
-    display_name = (data.get("display_name") or "").strip()
-    headline = (data.get("headline") or "").strip()
-    location = (data.get("location") or "").strip()
-    bio = (data.get("bio") or "").strip()
+    display_name = (data.get("display_name") or "").strip()[:120]
+    headline = (data.get("headline") or "").strip()[:180]
+    location = (data.get("location") or "").strip()[:120]
+    bio = (data.get("bio") or "").strip()[:2000]
 
     if not display_name or not headline:
         return jsonify({"error": "Display name and headline are required."}), 400
 
     profile_id = ProfileModel.upsert_for_user(user["id"], display_name, headline, location, bio)
+
+    # Account privacy lives on the user, not the profile, but the profile
+    # form is the natural place to change it, so accept it here too.
+    if "is_public" in data:
+        is_public = data.get("is_public")
+        if isinstance(is_public, str):
+            is_public = is_public.strip().lower() in ("1", "true", "yes", "on")
+        UserModel.set_public(user["id"], bool(is_public))
+
     return jsonify({"id": profile_id})
 
 
@@ -68,7 +81,7 @@ def upload_avatar(user):
     if file.mimetype not in ALLOWED_AVATAR_TYPES:
         return jsonify({"error": "Please upload a PNG, JPG, WEBP, or GIF image."}), 400
 
-    file.seek(0, 2)  # seek to end to measure size
+    file.seek(0, 2)
     size = file.tell()
     file.seek(0)
     if size > MAX_AVATAR_BYTES:

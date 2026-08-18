@@ -33,8 +33,14 @@ async function renderDashboard() {
       </div>
       <aside class="profile-summary">
         ${avatarHtml({ display_name: profile.display_name || user.full_name, avatar_url: profile.avatar_url }, "large")}
-        <h2>${esc(profile.display_name || user.full_name)}</h2>
+        <div class="profile-summary-head">
+          <h2>${esc(profile.display_name || user.full_name)}</h2>
+          <span class="badge ${user.is_public ? "badge-public" : "badge-private"}">${user.is_public ? "Public" : "Private"}</span>
+        </div>
         <p>${esc(profile.headline || "Your public headline is ready for editing.")}</p>
+        ${user.is_public
+          ? `<p class="privacy-hint">Anyone can find and view your profile. <a href="#/profile/edit">Change</a></p>`
+          : `<p class="privacy-hint">Only you can see your profile right now. <a href="#/profile/edit">Make it public</a></p>`}
       </aside>
     </section>`);
   // NOTE: rest of the view is appended below to keep the hero clean.

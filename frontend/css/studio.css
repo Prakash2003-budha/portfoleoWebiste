@@ -279,7 +279,7 @@
 }
 
 /* Overlay sits on top of a photo, so it stays dark/light-text
-   regardless of the site's own light theme — this is about legibility
+   regardless of the site's own light theme -- this is about legibility
    against arbitrary image content, not the page palette. */
 .wall-tile-overlay {
   position: absolute;
@@ -343,15 +343,6 @@
   border-radius: var(--radius-lg);
   background: var(--panel);
   color: var(--muted);
-}
-
-.nav-cta {
-  padding: 6px 14px;
-  border-radius: var(--pill);
-  background: var(--accent-soft);
-  border: 1px solid rgba(0, 136, 204, 0.24);
-  color: var(--accent-strong) !important;
-  font-weight: 600;
 }
 
 /* --- Lightbox (click a wall tile to view the full post) --- */

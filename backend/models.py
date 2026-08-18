@@ -48,16 +48,15 @@ PORTFOLIO_SECTIONS = {
 
 class UserModel:
     @classmethod
-    def exists_by_email(cls, email):
-        return db.fetchone("SELECT id FROM users WHERE lower(email) = lower(?)", (email,))
-
-    @classmethod
     def find_by_email(cls, email):
         return db.fetchone("SELECT * FROM users WHERE lower(email) = lower(?)", (email,))
 
     @classmethod
     def get_by_id(cls, user_id):
-        return db.fetchone("SELECT id, email, full_name, role FROM users WHERE id = ?", (user_id,))
+        return db.fetchone(
+            "SELECT id, email, full_name, role, is_public FROM users WHERE id = ?",
+            (user_id,),
+        )
 
     @classmethod
     def create(cls, full_name, email, password_hash, activation_token=None):
@@ -81,16 +80,32 @@ class UserModel:
         )
 
     @classmethod
-    def find_by_activation_token(cls, token):
-        return db.fetchone("SELECT * FROM users WHERE activation_token = ?", (token,))
+    def set_public(cls, user_id, is_public):
+        """Flip the account's privacy: 1 = public (everyone can see it),
+        0 = private (only the owner can see their profile/portfolio/posts)."""
+        return db.execute(
+            "UPDATE users SET is_public = ? WHERE id = ?",
+            (1 if is_public else 0, user_id),
+        )
+
+    @classmethod
+    def visibility(cls, user_id):
+        """Returns activated + is_public flags so a route can decide whether
+        an anonymous/other viewer is allowed to see this account's content."""
+        return db.fetchone(
+            "SELECT activated, is_public FROM users WHERE id = ?", (user_id,)
+        )
 
 
 class ProfileModel:
     @classmethod
     def list_public(cls):
+        """Public directory -- only show profiles whose account is activated
+        AND set to public (private accounts stay out of the directory)."""
         rows = db.fetchall(
             """SELECT profiles.*, users.full_name
                FROM profiles JOIN users ON users.id = profiles.user_id
+               WHERE users.activated = 1 AND users.is_public = 1
                ORDER BY profiles.id DESC"""
         )
         return rows
@@ -98,9 +113,9 @@ class ProfileModel:
     @classmethod
     def get_by_id(cls, profile_id):
         return db.fetchone(
-            """SELECT profiles.*, users.full_name, users.email
+            """SELECT profiles.*, users.full_name, users.email, users.is_public
                FROM profiles JOIN users ON users.id = profiles.user_id
-               WHERE profiles.id = ?""",
+               WHERE profiles.id = ? AND users.activated = 1""",
             (profile_id,),
         )
 
@@ -147,13 +162,18 @@ class ProfileModel:
 
     @classmethod
     def count_all(cls):
-        return db.fetchone("SELECT COUNT(*) AS total FROM profiles")["total"]
+        return db.fetchone(
+            """SELECT COUNT(*) AS total
+               FROM profiles JOIN users ON users.id = profiles.user_id
+               WHERE users.activated = 1 AND users.is_public = 1"""
+        )["total"]
 
     @classmethod
     def list_recent(cls, limit=6):
         return db.fetchall(
             """SELECT profiles.*, users.full_name
                FROM profiles JOIN users ON users.id = profiles.user_id
+               WHERE users.activated = 1 AND users.is_public = 1
                ORDER BY profiles.id DESC LIMIT ?""",
             (limit,),
         )
@@ -213,8 +233,9 @@ class PortfolioModel:
     @classmethod
     def owner_profile(cls, user_id):
         return db.fetchone(
-            """SELECT profiles.*, users.full_name FROM profiles
-               JOIN users ON users.id = profiles.user_id WHERE profiles.user_id = ?""",
+            """SELECT profiles.*, users.full_name, users.is_public FROM profiles
+               JOIN users ON users.id = profiles.user_id
+               WHERE profiles.user_id = ? AND users.activated = 1""",
             (user_id,),
         )
 
@@ -231,6 +252,7 @@ class PostModel:
                FROM posts
                JOIN users ON users.id = posts.user_id
                LEFT JOIN profiles ON profiles.user_id = posts.user_id
+               WHERE users.activated = 1 AND users.is_public = 1
                ORDER BY posts.id DESC LIMIT ?""",
             (limit,),
         )
@@ -242,7 +264,7 @@ class PostModel:
                FROM posts
                JOIN users ON users.id = posts.user_id
                LEFT JOIN profiles ON profiles.user_id = posts.user_id
-               WHERE posts.user_id = ?
+               WHERE posts.user_id = ? AND users.activated = 1
                ORDER BY posts.id DESC""",
             (user_id,),
         )
@@ -250,11 +272,11 @@ class PostModel:
     @classmethod
     def get_by_id(cls, post_id):
         return db.fetchone(
-            """SELECT posts.*, profiles.display_name, users.full_name
+            """SELECT posts.*, profiles.display_name, users.full_name, users.is_public
                FROM posts
                JOIN users ON users.id = posts.user_id
                LEFT JOIN profiles ON profiles.user_id = posts.user_id
-               WHERE posts.id = ?""",
+               WHERE posts.id = ? AND users.activated = 1""",
             (post_id,),
         )
 

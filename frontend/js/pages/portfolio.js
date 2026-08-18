@@ -36,7 +36,7 @@ async function renderPortfolio(params) {
   }
 
   // The visual Wall (Studio posts) is a nice-to-have alongside the structured
-  // sections below — don't let a failure here break the rest of the page.
+  // sections below -- don't let a failure here break the rest of the page.
   let posts = [];
   try {
     posts = await api.get(`/posts/user/${targetUserId}`);
@@ -76,7 +76,6 @@ async function renderPortfolio(params) {
       activeSection = btn.dataset.section;
       renderSectionBody(sections, editable);
       
-      // Update active tab styling
       document.querySelectorAll(".tabs button").forEach((b) => {
         b.classList.toggle("active", b === btn);
       });
@@ -90,7 +89,7 @@ function renderWallHtml(posts, editable) {
   if (!posts || posts.length === 0) {
     return `
       <div class="wall-empty">
-        <p>${editable ? "No posts yet — the Studio is where you design text, shapes, images, and freehand drawings into a post." : "This person hasn't posted anything to their wall yet."}</p>
+        <p>${editable ? "No posts yet -- the Studio is where you design text, shapes, images, and freehand drawings into a post." : "This person hasn't posted anything to their wall yet."}</p>
         ${editable ? `<a class="button ghost small" href="#/studio">Open the Studio</a>` : ""}
       </div>`;
   }
@@ -188,7 +187,7 @@ function renderSectionBody(sections, editable) {
       
       try {
         await api.post(`/portfolio/${activeSection}`, payload);
-        renderPortfolio({}); // Re-render to fetch and show new data
+        renderPortfolio({});
       } catch (err) {
         alert(err.message);
       }

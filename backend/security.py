@@ -8,10 +8,14 @@ prototype so existing seeded password hashes keep working).
 import hashlib
 import secrets
 
+# PBKDF2 iteration count. Kept as a named constant so that a future bump
+# (for either side of the security/cost tradeoff) only needs one edit.
+PBKDF2_ITERATIONS = 200_000
+
 
 def make_password_hash(password):
     salt = secrets.token_bytes(16)
-    digest = hashlib.pbkdf2_hmac("sha256", password.encode(), salt, 200000)
+    digest = hashlib.pbkdf2_hmac("sha256", password.encode(), salt, PBKDF2_ITERATIONS)
     return f"pbkdf2_sha256${salt.hex()}${digest.hex()}"
 
 
@@ -22,7 +26,7 @@ def verify_password(password, stored_hash):
             return False
         salt = bytes.fromhex(salt_hex)
         expected = bytes.fromhex(digest_hex)
-        actual = hashlib.pbkdf2_hmac("sha256", password.encode(), salt, 200000)
+        actual = hashlib.pbkdf2_hmac("sha256", password.encode(), salt, PBKDF2_ITERATIONS)
         return secrets.compare_digest(actual, expected)
     except ValueError:
         return False
@@ -35,7 +39,3 @@ def new_session_token():
 def new_activation_code(length=6):
     digits = "0123456789"
     return "".join(secrets.choice(digits) for _ in range(length))
-
-
-def new_activation_token():
-    return new_activation_code()
