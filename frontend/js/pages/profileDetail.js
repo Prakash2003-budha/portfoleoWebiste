@@ -4,7 +4,7 @@ async function renderProfileDetail(params) {
     ? "<a class='button' href='#/profile/edit'>Edit profile</a>"
     : "<a class='button ghost' href='#/profiles'>Back to directory</a>";
   const privacyNote = row.is_owner && !row.is_public
-    ? "<p class='alert'>This account is <strong>private</strong> — only you can see it. Anyone else will be told this profile doesn't exist.</p>"
+    ? "<p class='alert'>This account is <strong>private</strong> -- only you can see it. Anyone else will be told this profile doesn't exist.</p>"
     : "";
 
   setView(`

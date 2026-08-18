@@ -1,4 +1,4 @@
-/* Hero is one open surface — profile summary sits inline, no boxed card. */
+/* Hero is one open surface -- profile summary sits inline, no boxed card. */
 .dashboard-hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
@@ -52,7 +52,7 @@
   gap: 18px;
 }
 
-/* Stats — no more heavy cards. Just an inline strip with dividers. */
+/* Stats -- no more heavy cards. Just an inline strip with dividers. */
 .stats-grid {
   grid-template-columns: repeat(3, 1fr);
   gap: 0;
@@ -94,7 +94,7 @@
   text-transform: uppercase;
 }
 
-/* Quick actions — lighter tiles, subtle border, no double-boxing. */
+/* Quick actions -- lighter tiles, subtle border, no double-boxing. */
 .quick-actions {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   margin-bottom: 40px;

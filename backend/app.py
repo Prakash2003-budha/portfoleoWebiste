@@ -1,7 +1,7 @@
 """
 app.py
 ------
-Backend entrypoint. This is now a pure JSON API (no HTML rendering) —
+Backend entrypoint. This is now a pure JSON API (no HTML rendering) --
 the frontend is a separate static app in ../frontend that talks to
 these endpoints over fetch(). Run with:
     python3 app.py

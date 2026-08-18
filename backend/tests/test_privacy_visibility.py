@@ -4,7 +4,7 @@ Tests for the account privacy toggle (users.is_public).
 Rules enforced:
 - Public accounts (activated AND is_public = 1) are visible to everyone.
 - Private accounts (activated but is_public = 0) are hidden from everyone
-  except their owner — profile detail, portfolio, and posts all return the
+  except their owner -- profile detail, portfolio, and posts all return the
   same "not found" / empty responses as an unactivated account, and the
   profile drops out of the public directory.
 - The owner can still see and edit their own private profile/portfolio/posts,
@@ -114,7 +114,7 @@ def test_owner_can_toggle_privacy_via_profile_save(client, app):
     )
     anon = app.test_client()
 
-    # Public by default — anonymous can see the profile.
+    # Public by default -- anonymous can see the profile.
     assert anon.get(f"/api/profiles/{profile_id}").status_code == 200
     assert len(anon.get("/api/profiles").json) == 1
 

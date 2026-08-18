@@ -30,7 +30,7 @@ async function renderProfileForm(error) {
               ${profile.avatar_url ? "Change photo" : "Upload photo"}
             </label>
             <input type="file" id="avatar-input" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none">
-            <span class="avatar-uploader-hint">PNG, JPG, WEBP, or GIF. Up to 5MB — everyone browsing the directory will see this.</span>
+            <span class="avatar-uploader-hint">PNG, JPG, WEBP, or GIF. Up to 5MB -- everyone browsing the directory will see this.</span>
           </div>
         </div>
         <label>Display name<input name="display_name" value="${esc(profile.display_name || user.full_name)}" required></label>
@@ -40,15 +40,15 @@ async function renderProfileForm(error) {
 
         <div class="privacy-block">
           <h2>Who can see this account?</h2>
-          <p class="form-note">Public means anyone can find your profile, portfolio, and posts. Private means only you can see them — everyone else will be told the account doesn't exist.</p>
+          <p class="form-note">Public means anyone can find your profile, portfolio, and posts. Private means only you can see them -- everyone else will be told the account doesn't exist.</p>
           <div class="privacy-options">
             <label class="privacy-option">
               <input type="radio" name="is_public" value="1" ${user.is_public ? "checked" : ""}>
-              <span><strong>Public</strong> — anyone can view your profile, portfolio, and posts.</span>
+              <span><strong>Public</strong> -- anyone can view your profile, portfolio, and posts.</span>
             </label>
             <label class="privacy-option">
               <input type="radio" name="is_public" value="0" ${user.is_public ? "" : "checked"}>
-              <span><strong>Private</strong> — only you can see your profile, portfolio, and posts.</span>
+              <span><strong>Private</strong> -- only you can see your profile, portfolio, and posts.</span>
             </label>
           </div>
         </div>

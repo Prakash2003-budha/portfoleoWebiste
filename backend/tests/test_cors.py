@@ -47,7 +47,7 @@ def test_cors_preflight_returns_success_for_api_routes(app_without_cors_origin):
     # Flask's auto-generated OPTIONS handler returns 200 (with Allow header),
     # but the important thing for CORS is that the after_request hooks still
     # attach the right headers. The explicit cors_preflight route also returns
-    # 204 for routes that don't match a blueprint — both are valid preflight
+    # 204 for routes that don't match a blueprint -- both are valid preflight
     # responses as long as the CORS headers are present.
     assert response.status_code in (200, 204)
 

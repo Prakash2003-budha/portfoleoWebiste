@@ -28,7 +28,7 @@ function renderFeedback() {
         comments: form.get("comments"),
       });
       document.getElementById("feedback-alert").innerHTML =
-        "<p class='badge'>Thanks — your feedback was saved.</p>";
+        "<p class='badge'>Thanks -- your feedback was saved.</p>";
       e.target.reset();
     } catch (err) {
       document.getElementById("feedback-alert").innerHTML = `<p class="alert">${esc(err.message)}</p>`;

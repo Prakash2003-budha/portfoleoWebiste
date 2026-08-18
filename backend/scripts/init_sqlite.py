@@ -196,7 +196,7 @@ def init_sqlite_db(path=None, seed=True):
         "objects": [
             {"type": "textbox", "left": 90, "top": 320, "width": 900, "text": "Sujit is\nstill becoming.",
              "fontFamily": "Inter", "fontSize": 96, "fontWeight": 800, "fill": "#f7f3ea"},
-            {"type": "textbox", "left": 90, "top": 640, "width": 700, "text": "Welcome to my wall — made in the Studio, not a form.",
+            {"type": "textbox", "left": 90, "top": 640, "width": 700, "text": "Welcome to my wall -- made in the Studio, not a form.",
              "fontFamily": "Inter", "fontSize": 32, "fill": "#d7f5e9"},
         ],
     })

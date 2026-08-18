@@ -100,7 +100,7 @@ class UserModel:
 class ProfileModel:
     @classmethod
     def list_public(cls):
-        """Public directory — only show profiles whose account is activated
+        """Public directory -- only show profiles whose account is activated
         AND set to public (private accounts stay out of the directory)."""
         rows = db.fetchall(
             """SELECT profiles.*, users.full_name

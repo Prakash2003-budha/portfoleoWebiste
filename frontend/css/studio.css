@@ -279,7 +279,7 @@
 }
 
 /* Overlay sits on top of a photo, so it stays dark/light-text
-   regardless of the site's own light theme — this is about legibility
+   regardless of the site's own light theme -- this is about legibility
    against arbitrary image content, not the page palette. */
 .wall-tile-overlay {
   position: absolute;

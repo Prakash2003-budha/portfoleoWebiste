@@ -1,5 +1,5 @@
-// The "Canva-like" post editor. People express themselves visually here —
-// text, shapes, images, and freehand drawing on a fixed-size canvas — instead
+// The "Canva-like" post editor. People express themselves visually here --
+// text, shapes, images, and freehand drawing on a fixed-size canvas -- instead
 // of filling out education/experience forms. Built on Fabric.js (loaded from
 // a CDN in index.html) so we get object selection, resize handles, and
 // serialization for free.
@@ -286,7 +286,7 @@ function setStudioTool(tool) {
   const hint = document.getElementById("studio-hint");
   const hints = {
     select: "Click a tool on the left to add something, then drag, resize, or double-click text to edit it.",
-    text: "Text added — double-click it to type, drag the corners to resize.",
+    text: "Text added -- double-click it to type, drag the corners to resize.",
     pencil: "Pencil mode: click and drag on the canvas to draw. Pick Select to stop drawing.",
     image: "Choose an image from your device to add it to the canvas.",
   };

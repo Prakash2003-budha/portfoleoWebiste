@@ -73,7 +73,7 @@ def create_post(user):
     height = data.get("height") or 1080
 
     if not canvas_json or not thumbnail:
-        return jsonify({"error": "The canvas is empty — add something before saving."}), 400
+        return jsonify({"error": "The canvas is empty -- add something before saving."}), 400
     if len(str(canvas_json)) + len(str(thumbnail)) > MAX_PAYLOAD_LEN:
         return jsonify({"error": "This post is too large to save. Try removing a large image."}), 413
 
@@ -96,7 +96,7 @@ def update_post(user, post_id):
     height = data.get("height") or row.get("height") or 1080
 
     if not canvas_json or not thumbnail:
-        return jsonify({"error": "The canvas is empty — add something before saving."}), 400
+        return jsonify({"error": "The canvas is empty -- add something before saving."}), 400
     if len(str(canvas_json)) + len(str(thumbnail)) > MAX_PAYLOAD_LEN:
         return jsonify({"error": "This post is too large to save. Try removing a large image."}), 413
 

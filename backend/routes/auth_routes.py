@@ -44,7 +44,7 @@ def register():
             {
                 "id": existing["id"],
                 "pending_activation": True,
-                "message": "That email was already registered but not activated yet. We've sent a fresh code — check your inbox.",
+                "message": "That email was already registered but not activated yet. We've sent a fresh code -- check your inbox.",
             }
         ), 200
 

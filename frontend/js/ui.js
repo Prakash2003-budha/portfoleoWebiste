@@ -177,7 +177,7 @@ function setView(html) {
 }
 
 /**
- * Full-size image lightbox — used so anyone (not just the owner) can click
+ * Full-size image lightbox -- used so anyone (not just the owner) can click
  * a post on a Wall and see it properly instead of just the small tile.
  */
 function openLightbox(imageUrl, title, meta) {

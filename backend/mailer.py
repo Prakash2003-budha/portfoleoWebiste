@@ -20,7 +20,7 @@ def send_email(subject, recipient, text_body, html_body=None):
 
     try:
         # Use a context manager so the SMTP connection is always closed
-        # (quit) even when send_message raises — the old code leaked the
+        # (quit) even when send_message raises -- the old code leaked the
         # connection on any error after connect/login.
         if Config.SMTP_USE_SSL:
             with smtplib.SMTP_SSL(Config.SMTP_HOST, Config.SMTP_PORT) as server:

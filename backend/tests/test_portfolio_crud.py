@@ -6,7 +6,7 @@ Covers:
   - Rejecting an unknown section (404).
   - Rejecting a missing required field (400).
   - Deleting your own item (200).
-  - Preventing deletion of another user's item (404 — no leak).
+  - Preventing deletion of another user's item (404 -- no leak).
   - Fetching your own portfolio vs. someone else's public profile.
 """
 

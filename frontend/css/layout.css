@@ -162,7 +162,7 @@ main {
   background: var(--panel);
 }
 
-/* The dashboard hero is now the ONE big surface — a warm gradient card
+/* The dashboard hero is now the ONE big surface -- a warm gradient card
    that absorbs the profile summary and the stats, cutting box clutter. */
 .dashboard-hero {
   padding: clamp(28px, 5vw, 56px);
