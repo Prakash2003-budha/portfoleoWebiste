@@ -126,6 +126,17 @@ body {
 #theme-toggle { transition: transform 420ms ease; }
 #theme-toggle.spin { transform: rotate(360deg); }
 
+/* Fullscreen overlay used to cross-fade between themes */
+.theme-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--theme-transition) ease;
+}
+.theme-transition-overlay.show { opacity: 1; pointer-events: auto; }
+
 a { color: inherit; text-decoration: none; }
 
 a:focus-visible,

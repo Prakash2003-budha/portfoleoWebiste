@@ -154,16 +154,47 @@ async function renderTopbar() {
     // Theme toggle wiring
     const themeBtn = document.getElementById("theme-toggle");
     if (themeBtn) {
-      themeBtn.addEventListener("click", (e) => {
-        const next = getTheme() === "dark" ? "light" : "dark";
-        // animate the icon briefly
-        themeBtn.classList.add('spin');
-        setTimeout(() => themeBtn.classList.remove('spin'), 460);
-        applyTheme(next);
-        themeBtn.innerHTML = next === "dark" ? '🌙' : '☀';
-        themeBtn.setAttribute("aria-pressed", next === "dark");
-        themeBtn.setAttribute("aria-label", next === "dark" ? 'Switch to light mode' : 'Switch to dark mode');
-      });
+          themeBtn.addEventListener("click", (e) => {
+            const next = getTheme() === "dark" ? "light" : "dark";
+            const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            // small spin for the icon
+            themeBtn.classList.add('spin');
+            setTimeout(() => themeBtn.classList.remove('spin'), 460);
+
+            if (prefersReduced) {
+              applyTheme(next);
+              themeBtn.innerHTML = next === "dark" ? '🌙' : '☀';
+              themeBtn.setAttribute("aria-pressed", next === "dark");
+              themeBtn.setAttribute("aria-label", next === "dark" ? 'Switch to light mode' : 'Switch to dark mode');
+              return;
+            }
+
+            // Cross-fade overlay approach: cover with current bg, switch theme, reveal new bg
+            const overlay = document.createElement('div');
+            overlay.className = 'theme-transition-overlay';
+            const rootStyles = getComputedStyle(document.documentElement);
+            const currentBg = rootStyles.getPropertyValue('--bg') || '#fff';
+            overlay.style.background = currentBg.trim();
+            document.body.appendChild(overlay);
+
+            // fade in
+            requestAnimationFrame(() => overlay.classList.add('show'));
+            const duration = 300; // ms, matches --theme-transition closely
+            setTimeout(() => {
+              // switch theme while overlay is opaque
+              applyTheme(next);
+              // update overlay to new background so fading out reveals the new color
+              const newBg = getComputedStyle(document.documentElement).getPropertyValue('--bg') || '#fff';
+              overlay.style.background = newBg.trim();
+              // fade out
+              requestAnimationFrame(() => overlay.classList.remove('show'));
+              setTimeout(() => overlay.remove(), duration);
+
+              themeBtn.innerHTML = next === "dark" ? '🌙' : '☀';
+              themeBtn.setAttribute("aria-pressed", next === "dark");
+              themeBtn.setAttribute("aria-label", next === "dark" ? 'Switch to light mode' : 'Switch to dark mode');
+            }, duration);
+          });
     }
   } else {
     nav.innerHTML = `
@@ -179,12 +210,34 @@ async function renderTopbar() {
     if (themeBtnAnonymous) {
       themeBtnAnonymous.addEventListener("click", (e) => {
         const next = getTheme() === "dark" ? "light" : "dark";
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         themeBtnAnonymous.classList.add('spin');
         setTimeout(() => themeBtnAnonymous.classList.remove('spin'), 460);
-        applyTheme(next);
-        themeBtnAnonymous.innerHTML = next === "dark" ? '🌙' : '☀';
-        themeBtnAnonymous.setAttribute("aria-pressed", next === "dark");
-        themeBtnAnonymous.setAttribute("aria-label", next === "dark" ? 'Switch to light mode' : 'Switch to dark mode');
+        if (prefersReduced) {
+          applyTheme(next);
+          themeBtnAnonymous.innerHTML = next === "dark" ? '🌙' : '☀';
+          themeBtnAnonymous.setAttribute("aria-pressed", next === "dark");
+          themeBtnAnonymous.setAttribute("aria-label", next === "dark" ? 'Switch to light mode' : 'Switch to dark mode');
+          return;
+        }
+        const overlay = document.createElement('div');
+        overlay.className = 'theme-transition-overlay';
+        const rootStyles = getComputedStyle(document.documentElement);
+        const currentBg = rootStyles.getPropertyValue('--bg') || '#fff';
+        overlay.style.background = currentBg.trim();
+        document.body.appendChild(overlay);
+        requestAnimationFrame(() => overlay.classList.add('show'));
+        const duration = 300;
+        setTimeout(() => {
+          applyTheme(next);
+          const newBg = getComputedStyle(document.documentElement).getPropertyValue('--bg') || '#fff';
+          overlay.style.background = newBg.trim();
+          requestAnimationFrame(() => overlay.classList.remove('show'));
+          setTimeout(() => overlay.remove(), duration);
+          themeBtnAnonymous.innerHTML = next === "dark" ? '🌙' : '☀';
+          themeBtnAnonymous.setAttribute("aria-pressed", next === "dark");
+          themeBtnAnonymous.setAttribute("aria-label", next === "dark" ? 'Switch to light mode' : 'Switch to dark mode');
+        }, duration);
       });
     }
   }
