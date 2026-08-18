@@ -38,8 +38,8 @@ The frontend is plain static files, so any static server works:
 
 ```bash
 cd frontend
-python3 -m http.server 5500
-```
+ç
+python -m http.server 5500
 
 Open `http://127.0.0.1:5500`. If your backend isn't on `127.0.0.1:5000`,
 edit the `window.PFW_API_BASE` line at the top of `frontend/index.html`.
